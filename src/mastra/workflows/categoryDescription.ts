@@ -99,6 +99,8 @@ ${inputData.filters?.length ? `Available Filters/Options: ${JSON.stringify(input
     return {
       originalData: inputData,
       research: research.object as research,
+      generatedDescription: '', // Added to satisfy storeSchema
+      failedAttempts: [], // Added to satisfy storeSchema
     }
   },
 })
@@ -216,8 +218,8 @@ const generateAndEvaluateWorkflow = createWorkflow({
   .then(judgeStep)
   .commit()
 
-export const categoryWorkflow = createWorkflow({
-  id: 'category-workflow',
+export const categoryDescription = createWorkflow({
+  id: 'category-description',
   inputSchema: initialStateSchema,
   outputSchema: storeSchema,
   retryConfig: {

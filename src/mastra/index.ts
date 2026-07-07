@@ -1,5 +1,6 @@
 import { Mastra } from '@mastra/core'
 import { Observability, MastraStorageExporter, SamplingStrategyType } from '@mastra/observability'
+import { LibSQLStore } from '@mastra/libsql'
 import { tavilyExtraction } from './tools/tavilyExtraction'
 import { tavilySearch } from './tools/tavilySearch'
 import { saveHtmlToFile } from './tools/saveHtmlToFile'
@@ -8,11 +9,15 @@ import { categoryResearcherAgent } from './agents/categoryResearcherAgent'
 import { categoryCopywriterAgent } from './agents/categoryCopywriterAgent'
 import { categoryQualityJudgeAgent } from './agents/categoryQualityJudgeAgent'
 
-import { categoryWorkflow } from './workflows/category-workflow'
+import { categoryDescription } from './workflows/categoryDescription'
 import { testWorkflow } from './workflows/test-workflow'
 import { testWorkflow3 } from './workflows/test-workflow3'
 
 export const mastra = new Mastra({
+  storage: new LibSQLStore({
+    id: 'mastra-storage',
+    url: 'file:./LibSQLStore/mastra.db', // in /public folder
+  }),
   agents: {
     categoryResearcherAgent,
     categoryCopywriterAgent,
@@ -25,7 +30,7 @@ export const mastra = new Mastra({
     getCategoryData,
   },
   workflows: {
-    categoryWorkflow,
+    categoryDescription,
     testWorkflow,
     testWorkflow3,
   },
