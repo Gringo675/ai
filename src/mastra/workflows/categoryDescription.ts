@@ -7,6 +7,7 @@ import { categoryCopywriterAgent } from '../agents/categoryCopywriterAgent'
 import { categoryQualityJudgeAgent } from '../agents/categoryQualityJudgeAgent'
 
 const POLICY = await fs.readFile('./prompts/categoryDescriptionPolicy.md', 'utf-8')
+// const POLICY = await fs.readFile('./src/mastra/public/prompts/categoryDescriptionPolicy.md', 'utf-8')
 
 const initialStateSchema = z.object({
   alias: z.string(),
@@ -131,17 +132,6 @@ ${POLICY}
       prompt += `\nВаша предыдущая попытка не прошла аудит качества. Пожалуйста, перепишите текст, основываясь на следующих замечаниях:\n`
 
       if (lastFailedAttempt.critique) {
-        // let critiqueText = inputData.judgeEvaluation.critique
-        // try {
-        //   const parsedCritique = JSON.parse(inputData.judgeEvaluation.critique)
-        //   if (typeof parsedCritique === 'object' && parsedCritique !== null) {
-        //     critiqueText = Object.entries(parsedCritique)
-        //       .map(([key, value]) => `- **${key}**: ${value}`)
-        //       .join('\n')
-        //   }
-        // } catch (e) {
-        //   // Keep as is if not valid JSON
-        // }
         const critiqueText = Object.entries(lastFailedAttempt.critique)
           .map(([key, value]) => `- **${key}**: ${value}`)
           .join('\n')
@@ -224,7 +214,7 @@ export const categoryDescription = createWorkflow({
   outputSchema: storeSchema,
   retryConfig: {
     attempts: 7,
-    delay: 2000,
+    delay: 5000,
   },
   options: {
     onError: (errorInfo: any) => {

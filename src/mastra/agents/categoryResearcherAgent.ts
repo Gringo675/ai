@@ -1,8 +1,8 @@
-import { Agent } from '@mastra/core/agent'
+import { createQuotaAgent } from './agentQuotaErrorWrapper'
 import { tavilySearch } from '../tools/tavilySearch'
 import { readFileSync } from 'fs'
 
-export const categoryResearcherAgent = new Agent({
+export const categoryResearcherAgent = createQuotaAgent({
   id: 'category-researcher-agent',
   name: 'Category Researcher Agent',
   description: 'SEO researcher for measuring tools categories, providing a brief for the copywriter',

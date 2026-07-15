@@ -1,9 +1,11 @@
-Create rewrite flow (editing, revision)
+# Chords
 
-Enable memory storage
 Several google keys
 
-## Site
+## unBlocking flow
 
-Create mastraWsAdapter
-Create UI
+## build category characteristics
+
+## build product description
+
+## build product characteristics

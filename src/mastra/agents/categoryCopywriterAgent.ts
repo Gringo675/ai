@@ -1,7 +1,7 @@
-import { Agent } from '@mastra/core/agent'
+import { createQuotaAgent } from './agentQuotaErrorWrapper'
 import { readFileSync } from 'fs'
 
-export const categoryCopywriterAgent = new Agent({
+export const categoryCopywriterAgent = createQuotaAgent({
   id: 'category-copywriter-agent',
   name: 'Category Copywriter Agent',
   description: 'Professional SEO copywriter for category pages in the measuring tools store',

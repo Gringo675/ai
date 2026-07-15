@@ -1,7 +1,7 @@
-import { Agent } from '@mastra/core/agent'
+import { createQuotaAgent } from './agentQuotaErrorWrapper'
 import { readFileSync } from 'fs'
 
-export const categoryQualityJudgeAgent = new Agent({
+export const categoryQualityJudgeAgent = createQuotaAgent({
   id: 'category-quality-judge-agent',
   name: 'Category Quality Judge Agent',
   description: 'QA specialist for auditing category SEO descriptions',
