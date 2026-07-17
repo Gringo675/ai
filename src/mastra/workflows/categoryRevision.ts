@@ -9,6 +9,7 @@ const originalDataSchema = z.object({
   name: z.string(),
   description: z.string(),
   standards: z.array(z.string()),
+  grsi: z.array(z.string()),
   filters: z.array(
     z.object({
       name: z.string(),
@@ -53,6 +54,7 @@ const revisionStep = createStep({
 ---
 Технические параметры:
 ${inputData.originalData.standards?.length ? `- Стандарты: ${inputData.originalData.standards.join(', ')}` : '- Стандарты: не указаны'}
+${inputData.originalData.grsi?.length ? `- ГРСИ: ${inputData.originalData.grsi.join(', ')}` : '- ГРСИ: не указаны'}
 ${inputData.originalData.filters?.length ? `- Фильтры: ${JSON.stringify(inputData.originalData.filters)}` : '- Фильтры: не указаны'}
 ---
 SEO-исследование: ${JSON.stringify(inputData.research, null, 2)}

@@ -9,7 +9,7 @@ const API_KEYS = [
   process.env.BACKUP_API_KEY_2,
   process.env.BACKUP_API_KEY_3,
   process.env.BACKUP_API_KEY_4,
-  process.env.BACKUP_API_KEY_5,
+  // process.env.BACKUP_API_KEY_5,
 ].filter((key): key is string => !!key)
 
 // Mastra's hardcoded value, can't change (i.e. we can change up to 4 times per agent call)

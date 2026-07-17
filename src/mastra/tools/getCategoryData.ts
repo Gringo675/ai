@@ -11,6 +11,7 @@ export const getCategoryData = createTool({
     name: z.string(),
     description: z.string(),
     standards: z.array(z.string()),
+    grsi: z.array(z.string()),
     filters: z.array(
       z.object({
         name: z.string(),
@@ -35,6 +36,7 @@ export const getCategoryData = createTool({
       }
 
       const standards = data.catData.docs?.stnd?.map((s: any) => s.number) || []
+      const grsi = data.catData.docs?.rstr?.map((s: any) => s.number) || []
 
       const filters = (data.filter || [])
         .filter((f: any) => f.name !== 'Производитель')
@@ -47,6 +49,7 @@ export const getCategoryData = createTool({
         name: data.catData.name || '',
         description: data.catData.description || '',
         standards,
+        grsi,
         filters,
       }
     } catch (error) {
