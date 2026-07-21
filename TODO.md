@@ -1,5 +1,11 @@
 # Chords
 
+- add judge to revision flow
+- добавить блок "Последние замечания"
+- reset UI when category changes
+- add 'saved' indicator
+- добавить информацию о родительской, дочерних категориях чтобы агент лучше понимал смысловое направление текста
+
 ## unBlocking flow
 
 - only one flow (or agent) run at a time

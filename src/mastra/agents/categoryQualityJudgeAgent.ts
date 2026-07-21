@@ -8,10 +8,10 @@ export const categoryQualityJudgeAgent = createQuotaAgent({
   // model: 'google/gemini-3.1-flash-lite',
   // model: 'google/gemma-4-31b-it',
   model: [
-    { model: 'google/gemini-3.5-flash', maxRetries: 1 },
-    { model: 'google/gemini-3-flash-preview', maxRetries: 1 },
-    { model: 'google/gemini-2.5-flash', maxRetries: 1 },
-    { model: 'google/gemini-3.1-flash-lite', maxRetries: 5 },
+    { model: 'google/gemini-3.5-flash', maxRetries: 2 },
+    { model: 'google/gemini-3-flash-preview', maxRetries: 2 },
+    { model: 'google/gemini-2.5-flash', maxRetries: 2 },
+    // { model: 'google/gemini-3.1-flash-lite', maxRetries: 5 },
   ],
   instructions: () => {
     return readFileSync('./prompts/categoryQualityJudge.md', 'utf-8')

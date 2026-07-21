@@ -1,5 +1,6 @@
 import { Agent } from '@mastra/core/agent'
 import { ErrorProcessor } from '@mastra/core/processors'
+import { toLog } from '../../helpers/log.mjs'
 
 type AgentOptions = ConstructorParameters<typeof Agent>[0]
 
@@ -21,7 +22,8 @@ const changeGoogleApiKey = async (newKey: string | undefined) => {
   process.env.GOOGLE_API_KEY = newKey
   // Security: Mask the API key in logs
   const maskedKey = newKey ? `***${newKey.slice(-4)}` : 'undefined'
-  console.log(`GOOGLE_API_KEY rotated to: ${maskedKey}`)
+  // console.log(`GOOGLE_API_KEY rotated to: ${maskedKey}`)
+  toLog(`GOOGLE_API_KEY rotated to: ${maskedKey}`)
   // Optional: Wait for a second to ensure the environment variable is set
   await new Promise(resolve => setTimeout(resolve, 1000))
 }
@@ -36,7 +38,7 @@ export const quotaErrorProcessor: ErrorProcessor = {
       return { retry: false }
     }
 
-    console.log(`Quota error (429) detected. Rotating keys...`)
+    // console.log(`Quota error (429) detected. Rotating keys...`)
 
     const currentKey = process.env.GOOGLE_API_KEY
     const currentIndex = currentKey ? API_KEYS.indexOf(currentKey) : -1

@@ -3,34 +3,39 @@ import { Agent } from '@mastra/core/agent'
 
 // Remove the local quotaErrorProcessor and rotation logic as it is now handled by the wrapper
 
-// export const testAgent = createQuotaAgent({
-//   id: 'test-agent',
-//   name: 'Test Agent',
-//   description: 'A simple test agent',
-//   model: 'google/gemini-3-flash-preview',
-//   // model: {
-//   //   // id: 'google/gemini-3-flash-preview',
-//   //   id: 'google/gemini-3.1-pro-preview',
-//   //   apiKey: process.env.GOOGLE_API_KEY,
-//   // },
-//   // model: 'google/gemma-4-31b-it',
-//   instructions: 'Just repeat everything I say',
-// })
-
-export const testAgent = new Agent({
+export const testAgent = createQuotaAgent({
   id: 'test-agent',
   name: 'Test Agent',
   description: 'A simple test agent',
+  // model: {
+  //   // id: 'google/gemini-3-flash-preview',
+  //   id: 'google/gemini-3.1-pro-preview',
+  //   apiKey: process.env.GOOGLE_API_KEY,
+  // },
   // model: 'google/gemini-3-flash-preview',
-  model: {
-    id: 'google/gemini-3-flash-preview',
-    // id: 'google/gemma-4-31b-it',
-    // id: 'google/gemini-3.1-pro-preview',
-    apiKey: 'AIzaSyDDqP10xNSIJdh9zgawSKoOfkTEFffw_Lg',
-  },
   // model: 'google/gemma-4-31b-it',
+  model: 'google/gemini-3.1-pro-preview',
+  // model: [
+  //   { model: 'google/gemini-3.1-pro-preview', maxRetries: 1 },
+  //   { model: 'google/gemini-3.1-flash-lite', maxRetries: 1 },
+  // ],
   instructions: 'Just repeat everything I say',
 })
+
+// export const testAgent = new Agent({
+//   id: 'test-agent',
+//   name: 'Test Agent',
+//   description: 'A simple test agent',
+//   // model: 'google/gemini-3-flash-preview',
+//   model: {
+//     id: 'google/gemini-3-flash-preview',
+//     // id: 'google/gemma-4-31b-it',
+//     // id: 'google/gemini-3.1-pro-preview',
+//     apiKey: 'AIzaSyDDqP10xNSIJdh9zgawSKoOfkTEFffw_Lg',
+//   },
+//   // model: 'google/gemma-4-31b-it',
+//   instructions: 'Just repeat everything I say',
+// })
 
 const argsExample = {
   messages: [
