@@ -1,6 +1,12 @@
 import { createQuotaAgent } from './agentQuotaErrorWrapper'
 import { Agent } from '@mastra/core/agent'
+// import { createOpenAICompatible } from '@ai-sdk/openai-compatible'
 
+// const omniRoute = createOpenAICompatible({
+//   name: 'omniRouter',
+//   baseURL: 'http://localhost:20128/v1',
+//   apiKey: process.env.OMNIROUTE_API_KEY,
+// })
 // Remove the local quotaErrorProcessor and rotation logic as it is now handled by the wrapper
 
 export const testAgent = createQuotaAgent({
@@ -14,11 +20,18 @@ export const testAgent = createQuotaAgent({
   // },
   // model: 'google/gemini-3-flash-preview',
   // model: 'google/gemma-4-31b-it',
-  model: 'google/gemini-3.1-pro-preview',
+  // model: 'google/gemini-3.1-pro-preview',
   // model: [
   //   { model: 'google/gemini-3.1-pro-preview', maxRetries: 1 },
   //   { model: 'google/gemini-3.1-flash-lite', maxRetries: 1 },
   // ],
+  model: {
+    // id: 'omniroute/oc/big-pickle',
+    id: 'omniroute/gemini/gemma-4-31b-it', // prefix may be anything
+    url: 'http://localhost:20128/v1',
+    apiKey: process.env.OMNIROUTE_API_KEY,
+  },
+  // model: omniRoute.chatModel('gemini/gemini-3.1-flash-lite'),
   instructions: 'Just repeat everything I say',
 })
 

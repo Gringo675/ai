@@ -11,9 +11,11 @@ import { categoryResearcherAgent } from './agents/categoryResearcherAgent'
 import { categoryCopywriterAgent } from './agents/categoryCopywriterAgent'
 import { categoryQualityJudgeAgent } from './agents/categoryQualityJudgeAgent'
 import { testAgent } from './agents/testAgent'
+import { fileParserAgent } from './agents/fileParserAgent'
 
 import { categoryDescription } from './workflows/categoryDescription'
 import { categoryRevision } from './workflows/categoryRevision'
+import { fileParserWorkflow } from './workflows/fileParserWorkflow'
 import { testWorkflow } from './workflows/test-workflow'
 import { testWorkflow3 } from './workflows/test-workflow3'
 
@@ -30,6 +32,7 @@ export const mastra = new Mastra({
     categoryCopywriterAgent,
     categoryQualityJudgeAgent,
     testAgent,
+    fileParserAgent,
   },
   tools: {
     tavilyExtraction,
@@ -40,6 +43,7 @@ export const mastra = new Mastra({
   workflows: {
     categoryDescription,
     categoryRevision,
+    fileParserWorkflow,
     testWorkflow,
     testWorkflow3,
   },
