@@ -4,7 +4,7 @@ import { readFileSync } from 'fs'
 export const fileParserAgent = createQuotaAgent({
   id: 'file-parser-agent',
   name: 'File Parser Agent',
-  description: 'Parses PDF documents into two formats: human-friendly HTML and LLM-optimized hybrid Markdown',
+  description: 'Оцифровывает, распарсивает и структурирует PDF-документы в форматы HTML и Markdown',
   // model: 'google/gemini-3.6-flash',
   // model: 'google/gemma-4-31b-it',
   model: [
@@ -20,6 +20,7 @@ export const fileParserAgent = createQuotaAgent({
   //   apiKey: process.env.OMNIROUTE_API_KEY,
   // },
   instructions: () => {
+    // return readFileSync('./prompts/fileParserLLMOnly.md', 'utf-8')
     return readFileSync('./prompts/fileParser.md', 'utf-8')
   },
 })

@@ -28,6 +28,39 @@ const finalOutputSchema = z.object({
   mdOutputPath: z.string(),
 })
 
+function extractJsonObject<T>(text: string | undefined | null): T | null {
+  if (!text || typeof text !== 'string') return null
+  const trimmed = text.trim()
+  if (!trimmed) return null
+
+  try {
+    return JSON.parse(trimmed) as T
+  } catch {
+    // Strip markdown code fences ```json ... ``` or ``` ... ```
+    const cleaned = trimmed
+      .replace(/^```(?:json)?\s*/i, '')
+      .replace(/\s*```$/, '')
+      .trim()
+
+    try {
+      return JSON.parse(cleaned) as T
+    } catch {
+      // Find JSON object pattern in text
+      const firstBrace = cleaned.indexOf('{')
+      const lastBrace = cleaned.lastIndexOf('}')
+      if (firstBrace !== -1 && lastBrace > firstBrace) {
+        const jsonSubstring = cleaned.substring(firstBrace, lastBrace + 1)
+        try {
+          return JSON.parse(jsonSubstring) as T
+        } catch {
+          return null
+        }
+      }
+      return null
+    }
+  }
+}
+
 const parsePdfStep = createStep({
   id: 'parsePdfStep',
   description: 'Reads PDF document from filePath and parses it into human HTML and LLM Markdown using fileParserAgent',
@@ -52,7 +85,7 @@ const parsePdfStep = createStep({
           content: [
             {
               type: 'text',
-              text: 'Parse this PDF document and generate both human-friendly HTML and LLM-optimized hybrid Markdown formats.',
+              text: 'Обработай данный документ.',
             },
             {
               type: 'file',
@@ -67,14 +100,40 @@ const parsePdfStep = createStep({
           schema: parseResultSchema,
           jsonPromptInjection: true,
         },
+        providerOptions: {
+          google: {
+            safetySettings: [
+              { category: 'HARM_CATEGORY_HARASSMENT', threshold: 'BLOCK_NONE' },
+              { category: 'HARM_CATEGORY_HATE_SPEECH', threshold: 'BLOCK_NONE' },
+              { category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT', threshold: 'BLOCK_NONE' },
+              { category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_NONE' },
+              { category: 'HARM_CATEGORY_CIVIC_INTEGRITY', threshold: 'BLOCK_NONE' },
+            ],
+          },
+        },
       },
     )
 
-    const parsedObject = response.object as z.infer<typeof parseResultSchema>
+    let parsedObject = response.object as z.infer<typeof parseResultSchema> | undefined
+
+    if (!parsedObject?.humanHtml || !parsedObject?.llmContext) {
+      const fallback = extractJsonObject<z.infer<typeof parseResultSchema>>(response.text)
+      if (fallback?.humanHtml && fallback?.llmContext) {
+        parsedObject = fallback
+      }
+    }
+
+    if (!parsedObject?.humanHtml || !parsedObject?.llmContext) {
+      const errorMsg = response.text
+        ? `Failed to parse PDF document "${filePath}". The LLM response could not be parsed into expected JSON schema. Response text preview: "${response.text.slice(0, 300)}..."`
+        : `Failed to parse PDF document "${filePath}". The LLM returned an empty response. This usually occurs when Gemini safety/recitation filters block the PDF content or the document stream is unreadable.`
+
+      throw new Error(errorMsg)
+    }
 
     return {
-      humanHtml: parsedObject?.humanHtml ?? '',
-      llmContext: parsedObject?.llmContext ?? '',
+      humanHtml: parsedObject.humanHtml,
+      llmContext: parsedObject.llmContext,
       filePath,
     }
   },
