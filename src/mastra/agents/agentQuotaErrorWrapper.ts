@@ -6,15 +6,21 @@ type AgentOptions = ConstructorParameters<typeof Agent>[0]
 
 const API_KEYS = [
   process.env.GOOGLE_API_KEY,
-  process.env.BACKUP_API_KEY_1,
-  process.env.BACKUP_API_KEY_2,
-  process.env.BACKUP_API_KEY_3,
-  process.env.BACKUP_API_KEY_4,
-  // process.env.BACKUP_API_KEY_5,
+  // process.env.BACKUP_API_KEY_1,
+  // process.env.BACKUP_API_KEY_2,
+  // process.env.BACKUP_API_KEY_3,
+  // process.env.BACKUP_API_KEY_4,
+  process.env.BACKUP_API_KEY_5,
+  process.env.BACKUP_API_KEY_6,
+  process.env.BACKUP_API_KEY_7,
+  process.env.BACKUP_API_KEY_8,
+  process.env.BACKUP_API_KEY_9,
+  process.env.BACKUP_API_KEY_10,
 ].filter((key): key is string => !!key)
 
 // Mastra's hardcoded value, can't change (i.e. we can change up to 4 times per agent call)
-const hardcodedMaxRetries = 4
+// const hardcodedMaxRetries = 4
+const hardcodedMaxRetries = 2
 // Ensure we don't exceed available keys
 const maxRetries = Math.min(hardcodedMaxRetries, API_KEYS.length - 1)
 

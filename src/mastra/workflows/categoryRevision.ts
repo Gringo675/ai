@@ -128,6 +128,7 @@ ${POLICY}
     const result = await categoryQualityJudgeAgent.generate(prompt, {
       structuredOutput: {
         schema: judgeEvaluationSchema,
+        jsonPromptInjection: 'auto',
       },
     })
 

@@ -94,7 +94,7 @@ ${inputData.filters?.length ? `Available Filters/Options: ${JSON.stringify(input
     const research = await categoryResearcherAgent.generate(prompt, {
       structuredOutput: {
         schema: researchSchema,
-        jsonPromptInjection: true,
+        jsonPromptInjection: 'auto',
       },
     })
 
@@ -179,6 +179,7 @@ ${POLICY}
     const result = await categoryQualityJudgeAgent.generate(prompt, {
       structuredOutput: {
         schema: judgeEvaluationSchema,
+        jsonPromptInjection: 'auto',
       },
     })
 

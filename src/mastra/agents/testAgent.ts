@@ -21,17 +21,16 @@ export const testAgent = createQuotaAgent({
   // model: 'google/gemini-3-flash-preview',
   // model: 'google/gemma-4-31b-it',
   // model: 'google/gemini-3.1-pro-preview',
-  // model: [
-  //   { model: 'google/gemini-3.1-pro-preview', maxRetries: 1 },
-  //   { model: 'google/gemini-3.1-flash-lite', maxRetries: 1 },
-  // ],
-  model: {
-    // id: 'omniroute/oc/big-pickle',
-    id: 'omniroute/gemini/gemma-4-31b-it', // prefix may be anything
-    url: 'http://localhost:20128/v1',
-    apiKey: process.env.OMNIROUTE_API_KEY,
-  },
-  // model: omniRoute.chatModel('gemini/gemini-3.1-flash-lite'),
+  model: [
+    { model: 'google/gemini-3.1-pro-preview', maxRetries: 1 },
+    { model: 'google/gemini-2.5-pro', maxRetries: 1 },
+  ],
+  // model: {
+  //   // id: 'omniroute/oc/big-pickle',
+  //   id: 'omniroute/gemini/gemma-4-31b-it', // prefix may be anything
+  //   url: 'http://localhost:20128/v1',
+  //   apiKey: process.env.OMNIROUTE_API_KEY,
+  // },
   instructions: 'Just repeat everything I say',
 })
 

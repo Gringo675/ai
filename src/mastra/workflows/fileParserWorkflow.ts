@@ -66,7 +66,7 @@ const parsePdfStep = createStep({
   description: 'Reads PDF document from filePath and parses it into human HTML and LLM Markdown using fileParserAgent',
   inputSchema,
   outputSchema: parseStepOutputSchema,
-  execute: async ({ inputData }) => {
+  execute: async ({ inputData, abortSignal }) => {
     const { filePath } = inputData
 
     // Ensure file exists
@@ -96,9 +96,10 @@ const parsePdfStep = createStep({
         },
       ],
       {
+        abortSignal,
         structuredOutput: {
           schema: parseResultSchema,
-          jsonPromptInjection: true,
+          jsonPromptInjection: 'auto',
         },
         providerOptions: {
           google: {

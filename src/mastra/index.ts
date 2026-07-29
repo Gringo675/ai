@@ -16,6 +16,7 @@ import { fileParserAgent } from './agents/fileParserAgent'
 import { categoryDescription } from './workflows/categoryDescription'
 import { categoryRevision } from './workflows/categoryRevision'
 import { fileParserWorkflow } from './workflows/fileParserWorkflow'
+import { fileParserWorkflowAuto } from './workflows/fileParserWorkflowAuto'
 import { testWorkflow } from './workflows/test-workflow'
 import { testWorkflow3 } from './workflows/test-workflow3'
 
@@ -44,6 +45,7 @@ export const mastra = new Mastra({
     categoryDescription,
     categoryRevision,
     fileParserWorkflow,
+    fileParserWorkflowAuto,
     testWorkflow,
     testWorkflow3,
   },
