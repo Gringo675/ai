@@ -1,8 +1,8 @@
-import { createQuotaAgent } from './agentQuotaErrorWrapper'
+import { createMultiKeyAgent } from './multiKeyAgent'
 import { tavilySearch } from '../tools/tavilySearch'
 import { readFileSync } from 'fs'
 
-export const categoryResearcherAgent = createQuotaAgent({
+export const categoryResearcherAgent = createMultiKeyAgent({
   id: 'category-researcher-agent',
   name: 'Category Researcher Agent',
   description: 'SEO researcher for measuring tools categories, providing a brief for the copywriter',

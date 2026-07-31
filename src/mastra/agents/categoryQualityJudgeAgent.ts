@@ -1,7 +1,7 @@
-import { createQuotaAgent } from './agentQuotaErrorWrapper'
+import { createMultiKeyAgent } from './multiKeyAgent'
 import { readFileSync } from 'fs'
 
-export const categoryQualityJudgeAgent = createQuotaAgent({
+export const categoryQualityJudgeAgent = createMultiKeyAgent({
   id: 'category-quality-judge-agent',
   name: 'Category Quality Judge Agent',
   description: 'QA specialist for auditing category SEO descriptions',

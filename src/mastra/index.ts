@@ -12,6 +12,8 @@ import { categoryCopywriterAgent } from './agents/categoryCopywriterAgent'
 import { categoryQualityJudgeAgent } from './agents/categoryQualityJudgeAgent'
 import { testAgent } from './agents/testAgent'
 import { fileParserAgent } from './agents/fileParserAgent'
+import { testOllamaAgent } from './agents/testOllamaAgent'
+import { testOpenRouterAgent } from './agents/testOpenRouterAgent'
 
 import { categoryDescription } from './workflows/categoryDescription'
 import { categoryRevision } from './workflows/categoryRevision'
@@ -34,6 +36,8 @@ export const mastra = new Mastra({
     categoryQualityJudgeAgent,
     testAgent,
     fileParserAgent,
+    testOllamaAgent,
+    testOpenRouterAgent,
   },
   tools: {
     tavilyExtraction,

@@ -1,7 +1,7 @@
-import { createQuotaAgent } from './agentQuotaErrorWrapper'
+import { createMultiKeyAgent } from './multiKeyAgent'
 import { readFileSync } from 'fs'
 
-export const categoryCopywriterAgent = createQuotaAgent({
+export const categoryCopywriterAgent = createMultiKeyAgent({
   id: 'category-copywriter-agent',
   name: 'Category Copywriter Agent',
   description: 'Professional SEO copywriter for category pages in the measuring tools store',

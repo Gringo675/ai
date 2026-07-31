@@ -1,4 +1,4 @@
-import { createQuotaAgent } from './agentQuotaErrorWrapper'
+import { createMultiKeyAgent } from './multiKeyAgent'
 import { Agent } from '@mastra/core/agent'
 // import { createOpenAICompatible } from '@ai-sdk/openai-compatible'
 
@@ -9,10 +9,19 @@ import { Agent } from '@mastra/core/agent'
 // })
 // Remove the local quotaErrorProcessor and rotation logic as it is now handled by the wrapper
 
-export const testAgent = createQuotaAgent({
+export const testAgent = createMultiKeyAgent({
   id: 'test-agent',
   name: 'Test Agent',
   description: 'A simple test agent',
+  model: ({ requestContext }) => {
+    console.log(`requestContext: ${JSON.stringify(requestContext, null, 2)}`)
+
+    const provider = requestContext.get('provider-id')
+    console.log(`provider: ${JSON.stringify(provider, null, 2)}`)
+    const model = requestContext.get('model-id')
+    console.log(`model: ${JSON.stringify(model, null, 2)}`)
+    return 'google/gemma-4-31b-it'
+  },
   // model: {
   //   // id: 'google/gemini-3-flash-preview',
   //   id: 'google/gemini-3.1-pro-preview',
@@ -21,10 +30,10 @@ export const testAgent = createQuotaAgent({
   // model: 'google/gemini-3-flash-preview',
   // model: 'google/gemma-4-31b-it',
   // model: 'google/gemini-3.1-pro-preview',
-  model: [
-    { model: 'google/gemini-3.1-pro-preview', maxRetries: 1 },
-    { model: 'google/gemini-2.5-pro', maxRetries: 1 },
-  ],
+  // model: [
+  //   { model: 'google/gemini-3.1-pro-preview', maxRetries: 0 },
+  //   { model: 'google/gemini-2.5-pro', maxRetries: 0 },
+  // ],
   // model: {
   //   // id: 'omniroute/oc/big-pickle',
   //   id: 'omniroute/gemini/gemma-4-31b-it', // prefix may be anything

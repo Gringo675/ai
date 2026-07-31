@@ -28,6 +28,32 @@ const finalOutputSchema = z.object({
   mdOutputPath: z.string(),
 })
 
+export function isRecitationError(err: any): boolean {
+  if (!err) return false
+
+  if (typeof err === 'object' && err !== null) {
+    if (err.finishReason === 'RECITATION') return true
+    if ('rawResponse' in err && isRecitationError(err.rawResponse)) return true
+    if ('response' in err && isRecitationError(err.response)) return true
+    if ('candidates' in err && Array.isArray(err.candidates)) {
+      if (err.candidates.some((c: any) => c?.finishReason === 'RECITATION')) return true
+    }
+  }
+
+  const str =
+    typeof err === 'string'
+      ? err
+      : err instanceof Error
+        ? `${err.name}: ${err.message}\n${err.stack}`
+        : JSON.stringify(err)
+
+  return (
+    str.includes('RECITATION') ||
+    str.includes('resembles existing copyrighted works') ||
+    str.includes('copyrighted works')
+  )
+}
+
 function extractJsonObject<T>(text: string | undefined | null): T | null {
   if (!text || typeof text !== 'string') return null
   const trimmed = text.trim()
@@ -78,42 +104,58 @@ const parsePdfStep = createStep({
 
     const fileBuffer = await fs.readFile(filePath)
 
-    const response = await fileParserAgent.generate(
-      [
-        {
-          role: 'user',
-          content: [
-            {
-              type: 'text',
-              text: 'Обработай данный документ.',
-            },
-            {
-              type: 'file',
-              mimeType: 'application/pdf',
-              data: fileBuffer,
-            },
-          ],
-        },
-      ],
-      {
-        abortSignal,
-        structuredOutput: {
-          schema: parseResultSchema,
-          jsonPromptInjection: 'auto',
-        },
-        providerOptions: {
-          google: {
-            safetySettings: [
-              { category: 'HARM_CATEGORY_HARASSMENT', threshold: 'BLOCK_NONE' },
-              { category: 'HARM_CATEGORY_HATE_SPEECH', threshold: 'BLOCK_NONE' },
-              { category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT', threshold: 'BLOCK_NONE' },
-              { category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_NONE' },
-              { category: 'HARM_CATEGORY_CIVIC_INTEGRITY', threshold: 'BLOCK_NONE' },
+    let response: any
+    try {
+      response = await fileParserAgent.generate(
+        [
+          {
+            role: 'user',
+            content: [
+              {
+                type: 'text',
+                text: 'Обработай данный документ.',
+              },
+              {
+                type: 'file',
+                mimeType: 'application/pdf',
+                data: fileBuffer,
+              },
             ],
           },
+        ],
+        {
+          abortSignal,
+          structuredOutput: {
+            schema: parseResultSchema,
+            jsonPromptInjection: 'auto',
+          },
+          providerOptions: {
+            google: {
+              safetySettings: [
+                { category: 'HARM_CATEGORY_HARASSMENT', threshold: 'BLOCK_NONE' },
+                { category: 'HARM_CATEGORY_HATE_SPEECH', threshold: 'BLOCK_NONE' },
+                { category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT', threshold: 'BLOCK_NONE' },
+                { category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_NONE' },
+                { category: 'HARM_CATEGORY_CIVIC_INTEGRITY', threshold: 'BLOCK_NONE' },
+              ],
+            },
+          },
         },
-      },
-    )
+      )
+    } catch (err: any) {
+      if (isRecitationError(err)) {
+        throw new Error(
+          `RECITATION: Failed to parse PDF document "${filePath}". Gemini content filter triggered (resembles copyrighted works).`,
+        )
+      }
+      throw err
+    }
+
+    if (isRecitationError(response)) {
+      throw new Error(
+        `RECITATION: Failed to parse PDF document "${filePath}". Gemini content filter triggered (resembles copyrighted works).`,
+      )
+    }
 
     let parsedObject = response.object as z.infer<typeof parseResultSchema> | undefined
 
@@ -125,9 +167,12 @@ const parsePdfStep = createStep({
     }
 
     if (!parsedObject?.humanHtml || !parsedObject?.llmContext) {
-      const errorMsg = response.text
-        ? `Failed to parse PDF document "${filePath}". The LLM response could not be parsed into expected JSON schema. Response text preview: "${response.text.slice(0, 300)}..."`
-        : `Failed to parse PDF document "${filePath}". The LLM returned an empty response. This usually occurs when Gemini safety/recitation filters block the PDF content or the document stream is unreadable.`
+      const isRecitation = isRecitationError(response.text)
+      const errorMsg = isRecitation
+        ? `RECITATION: Failed to parse PDF document "${filePath}". Gemini content filter triggered (resembles copyrighted works).`
+        : response.text
+          ? `Failed to parse PDF document "${filePath}". The LLM response could not be parsed into expected JSON schema. Response text preview: "${response.text.slice(0, 300)}..."`
+          : `Failed to parse PDF document "${filePath}". The LLM returned an empty response. This usually occurs when Gemini safety/recitation filters block the PDF content or the document stream is unreadable.`
 
       throw new Error(errorMsg)
     }

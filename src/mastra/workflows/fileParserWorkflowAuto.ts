@@ -2,7 +2,7 @@ import { createStep, createWorkflow } from '@mastra/core/workflows'
 import { z } from 'zod'
 import fs from 'fs/promises'
 import path from 'path'
-import { fileParserWorkflow } from './fileParserWorkflow'
+import { fileParserWorkflow, isRecitationError } from './fileParserWorkflow'
 
 const inputSchema = z.object({
   folderPath: z.string().default('D:\\pr_gt\\norm_docs\\parsing'),
@@ -51,6 +51,7 @@ const processFolderStep = createStep({
     const parsedHtmlFolder = path.join(parsedFolder, 'html')
     const parsedMdFolder = path.join(parsedFolder, 'md')
     const errorsFolder = path.join(baseFolder, 'errors')
+    const recitationFolder = path.join(baseFolder, 'recitation_errors')
 
     // Ensure target directories exist
     await fs.mkdir(unparsedFolder, { recursive: true })
@@ -59,6 +60,7 @@ const processFolderStep = createStep({
     await fs.mkdir(parsedHtmlFolder, { recursive: true })
     await fs.mkdir(parsedMdFolder, { recursive: true })
     await fs.mkdir(errorsFolder, { recursive: true })
+    await fs.mkdir(recitationFolder, { recursive: true })
 
     const entries = await fs.readdir(unparsedFolder, { withFileTypes: true })
     const pdfFiles = entries
@@ -114,8 +116,14 @@ const processFolderStep = createStep({
         const errorMessage = err?.message || String(err)
         console.error(`Error processing file ${fileName}:`, errorMessage)
 
-        // Relocate PDF file to errors directory
-        await moveFile(sourcePdfPath, path.join(errorsFolder, fileName))
+        // Relocate PDF file: if recitation error, move to recitation_error folder; otherwise move to errors folder
+        if (isRecitationError(err)) {
+          console.log(`Recitation error detected for ${fileName}. Moving to recitation_error folder.`)
+          await moveFile(sourcePdfPath, path.join(recitationFolder, fileName))
+        } else {
+          console.log(`Non-recitation error for ${fileName}. Moving to errors folder.`)
+          await moveFile(sourcePdfPath, path.join(errorsFolder, fileName))
+        }
 
         // Clean up leftover HTML/MD files from unparsed if any exist
         try {

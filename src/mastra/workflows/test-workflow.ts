@@ -30,10 +30,10 @@ export const testWorkflow = createWorkflow({
   id: 'test-workflow',
   inputSchema,
   outputSchema,
-  retryConfig: {
-    attempts: 1,
-    delay: 5000,
-  },
+  // retryConfig: {
+  //   attempts: 1,
+  //   delay: 5000,
+  // },
 })
   .then(testStep)
   .commit()
