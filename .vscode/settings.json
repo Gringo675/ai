@@ -1,0 +1,10 @@
+{
+  "pendant.showThinking": true,
+  "pendant.thinkingLevel": "high",
+  "pendant.thinkingDisplayMode": "collapseWhenDone",
+  "pendant.voice.enabled": false,
+  "pendant.autoGenerateSessionNames": false,
+  "pendant.autoCompact": false,
+  "pendant.autoRetry": true,
+  "pendant.fontSize": 15
+}
