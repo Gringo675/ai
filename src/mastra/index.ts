@@ -1,3 +1,11 @@
+import dotenv from 'dotenv'
+import path from 'path'
+import { fileURLToPath } from 'url'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+dotenv.config({ path: path.resolve(__dirname, '../../.env') })
+
 import { Mastra } from '@mastra/core'
 import { Observability, MastraStorageExporter, SamplingStrategyType } from '@mastra/observability'
 import { LibSQLStore } from '@mastra/libsql'
@@ -14,6 +22,7 @@ import { testAgent } from './agents/testAgent'
 import { fileParserAgent } from './agents/fileParserAgent'
 import { testOllamaAgent } from './agents/testOllamaAgent'
 import { testOpenRouterAgent } from './agents/testOpenRouterAgent'
+import { documentProductExtractorAgent } from './agents/documentProductExtractorAgent'
 
 import { categoryDescription } from './workflows/categoryDescription'
 import { categoryRevision } from './workflows/categoryRevision'
@@ -38,6 +47,7 @@ export const mastra = new Mastra({
     fileParserAgent,
     testOllamaAgent,
     testOpenRouterAgent,
+    documentProductExtractorAgent,
   },
   tools: {
     tavilyExtraction,

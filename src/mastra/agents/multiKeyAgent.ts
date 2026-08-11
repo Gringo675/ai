@@ -23,19 +23,21 @@ import { Agent } from '@mastra/core/agent'
 type AgentOptions = ConstructorParameters<typeof Agent>[0]
 type ModelInput = AgentOptions['model']
 
-const API_KEYS = [
-  process.env.GOOGLE_API_KEY,
-  // process.env.BACKUP_API_KEY_1,
-  // process.env.BACKUP_API_KEY_2,
-  // process.env.BACKUP_API_KEY_3,
-  // process.env.BACKUP_API_KEY_4,
-  process.env.BACKUP_API_KEY_5,
-  process.env.BACKUP_API_KEY_6,
-  process.env.BACKUP_API_KEY_7,
-  process.env.BACKUP_API_KEY_8,
-  process.env.BACKUP_API_KEY_9,
-  process.env.BACKUP_API_KEY_10,
-].filter((key): key is string => !!key)
+function getApiKeys(): string[] {
+  return [
+    process.env.GOOGLE_API_KEY,
+    // process.env.BACKUP_API_KEY_1,
+    // process.env.BACKUP_API_KEY_2,
+    // process.env.BACKUP_API_KEY_3,
+    // process.env.BACKUP_API_KEY_4,
+    process.env.BACKUP_API_KEY_5,
+    process.env.BACKUP_API_KEY_6,
+    process.env.BACKUP_API_KEY_7,
+    process.env.BACKUP_API_KEY_8,
+    process.env.BACKUP_API_KEY_9,
+    process.env.BACKUP_API_KEY_10,
+  ].filter((key): key is string => !!key)
+}
 
 function shuffleArray<T>(array: T[]): T[] {
   const shuffled = [...array]
@@ -74,7 +76,8 @@ function extractModelIdAndConfig(item: any): {
 }
 
 export function buildMultiKeyModels(modelOption: ModelInput): ModelInput {
-  if (!API_KEYS.length || !modelOption) {
+  const apiKeys = getApiKeys()
+  if (!apiKeys.length || !modelOption) {
     return modelOption
   }
 
@@ -87,7 +90,7 @@ export function buildMultiKeyModels(modelOption: ModelInput): ModelInput {
 
   for (const item of rawList) {
     const { id, extraConfig = {}, maxRetries, ...rest } = extractModelIdAndConfig(item)
-    const randomizedKeys = shuffleArray(API_KEYS)
+    const randomizedKeys = shuffleArray(apiKeys)
 
     for (const key of randomizedKeys) {
       expandedList.push({
@@ -106,10 +109,14 @@ export function buildMultiKeyModels(modelOption: ModelInput): ModelInput {
 }
 
 export function createMultiKeyAgent(options: AgentOptions) {
-  const rotatedModel = buildMultiKeyModels(options.model)
-
   return new Agent({
     ...options,
-    model: rotatedModel,
+    model: (context) => {
+      const rotatedModel = buildMultiKeyModels(options.model)
+      if (typeof rotatedModel === 'function') {
+        return rotatedModel(context)
+      }
+      return rotatedModel
+    },
   })
 }
