@@ -1,7 +1,7 @@
-import { createMultiKeyAgent } from './multiKeyAgent'
+import { createGoogleMultiKeyAgent } from './googleMultiKeyAgent'
 import { readFileSync } from 'fs'
 
-export const categoryQualityJudgeAgent = createMultiKeyAgent({
+export const categoryQualityJudgeAgent = createGoogleMultiKeyAgent({
   id: 'category-quality-judge-agent',
   name: 'Category Quality Judge Agent',
   description: 'QA specialist for auditing category SEO descriptions',

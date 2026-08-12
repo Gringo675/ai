@@ -1,7 +1,7 @@
-import { createMultiKeyAgent } from './multiKeyAgent'
+import { createGoogleMultiKeyAgent } from './googleMultiKeyAgent'
 import { readFileSync } from 'fs'
 
-export const categoryCopywriterAgent = createMultiKeyAgent({
+export const categoryCopywriterAgent = createGoogleMultiKeyAgent({
   id: 'category-copywriter-agent',
   name: 'Category Copywriter Agent',
   description: 'Professional SEO copywriter for category pages in the measuring tools store',

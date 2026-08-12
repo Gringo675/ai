@@ -1,8 +1,8 @@
-import { createMultiKeyAgent } from './multiKeyAgent'
+import { createGoogleMultiKeyAgent } from './googleMultiKeyAgent'
 import { Agent } from '@mastra/core/agent'
 import { readFileSync } from 'fs'
 
-export const fileParserAgent = createMultiKeyAgent({
+export const fileParserAgent = createGoogleMultiKeyAgent({
   id: 'file-parser-agent',
   name: 'File Parser Agent',
   description: 'Оцифровывает, распарсивает и структурирует PDF-документы в форматы HTML и Markdown',

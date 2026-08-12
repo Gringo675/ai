@@ -1,4 +1,4 @@
-import { createMultiKeyAgent } from './multiKeyAgent'
+import { createGoogleMultiKeyAgent } from './googleMultiKeyAgent'
 import { Agent } from '@mastra/core/agent'
 // import { createOpenAICompatible } from '@ai-sdk/openai-compatible'
 
@@ -9,7 +9,7 @@ import { Agent } from '@mastra/core/agent'
 // })
 // Remove the local quotaErrorProcessor and rotation logic as it is now handled by the wrapper
 
-export const testAgent = createMultiKeyAgent({
+export const testAgent = createGoogleMultiKeyAgent({
   id: 'test-agent',
   name: 'Test Agent',
   description: 'A simple test agent',
