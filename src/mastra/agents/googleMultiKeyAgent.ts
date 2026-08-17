@@ -111,7 +111,7 @@ export function buildGoogleMultiKeyModels(modelOption: ModelInput): ModelInput {
 export function createGoogleMultiKeyAgent(options: AgentOptions) {
   return new Agent({
     ...options,
-    model: (context) => {
+    model: context => {
       const rotatedModel = buildGoogleMultiKeyModels(options.model)
       if (typeof rotatedModel === 'function') {
         return rotatedModel(context)

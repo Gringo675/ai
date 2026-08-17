@@ -22,6 +22,7 @@ import { fileParserWorkflow } from './workflows/fileParserWorkflow'
 import { fileParserWorkflowAuto } from './workflows/fileParserWorkflowAuto'
 import { testWorkflow } from './workflows/test-workflow'
 import { testWorkflow3 } from './workflows/test-workflow3'
+import { testDocumentProductExtractorWorkflow } from './workflows/testDocumentProductExtractorWorkflow'
 
 export const mastra = new Mastra({
   server: {
@@ -54,6 +55,7 @@ export const mastra = new Mastra({
     fileParserWorkflowAuto,
     testWorkflow,
     testWorkflow3,
+    testDocumentProductExtractorWorkflow,
   },
   observability: new Observability({
     configs: {
