@@ -34,7 +34,7 @@ const testStep = createStep({
       throw new Error(`Workflow failed with status: ${runResult.status}`)
     }
 
-    const output = runResult.output as any
+    const output = runResult.result as any
 
     const outputDir = path.resolve(process.cwd(), '.scratch/category-characteristics')
     await fs.mkdir(outputDir, { recursive: true })
