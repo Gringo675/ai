@@ -6,7 +6,7 @@
 
 **Status:** ready-for-agent
 
-- [ ] A dedicated characteristics judge agent is configured with structured output evaluation schema
-- [ ] A `dountil` feedback loop executes up to 3 attempts when judge returns `FAIL`
-- [ ] On failure, actionable critique and required corrections are injected into the copywriter prompt for regeneration
-- [ ] The workflow state (`storeSchema`) preserves `originalData` (including existing `characteristics`), all document extractions, fallback flag, judge verdict, critique, and failed attempts history
+- [x] A dedicated characteristics judge agent is configured with structured output evaluation schema
+- [x] A `dountil` feedback loop executes up to 3 attempts when judge returns `FAIL`
+- [x] On failure, actionable critique and required corrections are injected into the copywriter prompt for regeneration
+- [x] The workflow state (`storeSchema`) preserves `originalData` (including existing `characteristics`), all document extractions, fallback flag, judge verdict, critique, and failed attempts history

@@ -10,6 +10,9 @@ import { getCategoryData } from './tools/getCategoryData'
 import { categoryResearcherAgent } from './agents/categoryResearcherAgent'
 import { categoryCopywriterAgent } from './agents/categoryCopywriterAgent'
 import { categoryQualityJudgeAgent } from './agents/categoryQualityJudgeAgent'
+import { categoryCharacteristicsResearcherAgent } from './agents/categoryCharacteristicsResearcherAgent'
+import { categoryCharacteristicsCopywriterAgent } from './agents/categoryCharacteristicsCopywriterAgent'
+import { categoryCharacteristicsJudgeAgent } from './agents/categoryCharacteristicsJudgeAgent'
 import { testAgent } from './agents/testAgent'
 import { fileParserAgent } from './agents/fileParserAgent'
 import { testOllamaAgent } from './agents/testOllamaAgent'
@@ -18,11 +21,13 @@ import { documentProductExtractorAgent } from './agents/documentProductExtractor
 
 import { categoryDescription } from './workflows/categoryDescription'
 import { categoryRevision } from './workflows/categoryRevision'
+import { categoryCharacteristics } from './workflows/categoryCharacteristics'
 import { fileParserWorkflow } from './workflows/fileParserWorkflow'
 import { fileParserWorkflowAuto } from './workflows/fileParserWorkflowAuto'
 import { testWorkflow } from './workflows/test-workflow'
 import { testWorkflow3 } from './workflows/test-workflow3'
 import { testDocumentProductExtractorWorkflow } from './workflows/testDocumentProductExtractorWorkflow'
+import { testCategoryCharacteristicsWorkflow } from './workflows/testCategoryCharacteristicsWorkflow'
 
 export const mastra = new Mastra({
   server: {
@@ -36,6 +41,9 @@ export const mastra = new Mastra({
     categoryResearcherAgent,
     categoryCopywriterAgent,
     categoryQualityJudgeAgent,
+    categoryCharacteristicsResearcherAgent,
+    categoryCharacteristicsCopywriterAgent,
+    categoryCharacteristicsJudgeAgent,
     testAgent,
     fileParserAgent,
     testOllamaAgent,
@@ -51,11 +59,13 @@ export const mastra = new Mastra({
   workflows: {
     categoryDescription,
     categoryRevision,
+    categoryCharacteristics,
     fileParserWorkflow,
     fileParserWorkflowAuto,
     testWorkflow,
     testWorkflow3,
     testDocumentProductExtractorWorkflow,
+    testCategoryCharacteristicsWorkflow,
   },
   observability: new Observability({
     configs: {

@@ -6,8 +6,8 @@
 
 **Status:** ready-for-agent
 
-- [ ] Создан промпт `src/mastra/public/prompts/categoryCharacteristicsResearcher.md` для синтеза параметров из `availableProps` и веб-поиска
-- [ ] Реализован агент `categoryCharacteristicsResearcherAgent` с подключенным инструментом `tavilySearch`
-- [ ] В `categoryCharacteristics.ts` добавлено автоматическое ветвление: если после фильтрации нет ни одного документа, запускается шаг исследования
-- [ ] Формируется компактная сводка `technicalSummary` в поле `fallbackResearch` схемы состояния
-- [ ] Копирайтер и судья корректно обрабатывают fallback-сводку и создают валидные характеристики для категорий без документов
+- [x] Создан промпт `src/mastra/public/prompts/categoryCharacteristicsResearcher.md` для синтеза параметров из `availableProps` и веб-поиска
+- [x] Реализован агент `categoryCharacteristicsResearcherAgent` с подключенным инструментом `tavilySearch`
+- [x] В `categoryCharacteristics.ts` добавлено автоматическое ветвление: если после фильтрации нет ни одного документа, запускается шаг исследования
+- [x] Формируется компактная сводка `technicalSummary` в поле `fallbackResearch` схемы состояния
+- [x] Копирайтер и судья корректно обрабатывают fallback-сводку и создают валидные характеристики для категорий без документов
