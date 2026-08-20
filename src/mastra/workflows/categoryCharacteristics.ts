@@ -75,13 +75,12 @@ const storeSchema = z.object({
 
 type StoreState = z.infer<typeof storeSchema>
 
-function parseYear(docNumber: string, docName: string): number {
-  const combined = `${docNumber} ${docName}`
-  const match4 = combined.match(/\b(19\d{2}|20\d{2})\b/)
+function parseYear(docNumber: string): number {
+  const match4 = docNumber.match(/(?:-|\s+)(19\d{2}|20\d{2})\b/) || docNumber.match(/\b(19\d{2}|20\d{2})\b/)
   if (match4) {
     return parseInt(match4[1], 10)
   }
-  const match2 = combined.match(/-(\d{2})\b/)
+  const match2 = docNumber.match(/-(\d{2})\b/)
   if (match2) {
     const yy = parseInt(match2[1], 10)
     return yy >= 50 ? 1900 + yy : 2000 + yy
@@ -139,7 +138,7 @@ const fetchAndExtractStep = createStep({
       const text = doc.text || ''
       if (!text.trim()) continue
 
-      const year = parseYear(docNumber, docName)
+      const year = parseYear(docNumber)
       rawDocs.push({
         docNumber,
         docName,
@@ -164,7 +163,7 @@ const fetchAndExtractStep = createStep({
 
       if (!combinedText.trim()) continue
 
-      const year = parseYear(docNumber, docName)
+      const year = parseYear(docNumber)
       const fileLink = doc.file_ot || doc.file_mp || doc.file || null
       const fileType = doc.file_ot ? 'file_ot' : doc.file_mp ? 'file_mp' : null
 
