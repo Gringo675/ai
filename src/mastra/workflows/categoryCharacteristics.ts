@@ -15,7 +15,6 @@ const initialStateSchema = z.object({
 const originalDataSchema = z.object({
   alias: z.string(),
   name: z.string(),
-  description: z.string(),
   characteristics: z.string().default(''),
   totalProducts: z.number().default(0),
   availableProps: z.record(z.string(), z.array(z.string())).default({}),
@@ -75,29 +74,16 @@ const storeSchema = z.object({
 
 type StoreState = z.infer<typeof storeSchema>
 
-function parseYear(docNumber: string): number {
-  const match4 = docNumber.match(/(?:-|\s+)(19\d{2}|20\d{2})\b/) || docNumber.match(/\b(19\d{2}|20\d{2})\b/)
-  if (match4) {
-    return parseInt(match4[1], 10)
-  }
-  const match2 = docNumber.match(/-(\d{2})\b/)
-  if (match2) {
-    const yy = parseInt(match2[1], 10)
-    return yy >= 50 ? 1900 + yy : 2000 + yy
-  }
-  return 2000
-}
-
 const fetchAndExtractStep = createStep({
   id: 'fetchAndExtract',
-  description: 'Fetches category data, collects documents, sorts by year descending, and extracts relevant specifications',
+  description:
+    'Fetches category data, collects documents, sorts by year descending, and extracts relevant specifications',
   inputSchema: initialStateSchema,
   outputSchema: storeSchema,
   execute: async ({ inputData, abortSignal }) => {
     const { alias } = inputData
     const apiUrl = `http://localhost:3000/api/ai/categoryData/${alias}`
 
-    console.log(`[CategoryCharacteristics] Fetching data from API: ${apiUrl}`)
     const response = await fetch(apiUrl)
     if (!response.ok) {
       throw new Error(`Failed to fetch category data for alias "${alias}": ${response.status} ${response.statusText}`)
@@ -112,7 +98,6 @@ const fetchAndExtractStep = createStep({
     const originalData = {
       alias,
       name: catData.name || alias,
-      description: catData.description || '',
       characteristics: catData.characteristics || '',
       totalProducts: catData.totalProducts || catData.products?.length || 0,
       availableProps: catData.availableProps || {},
@@ -133,17 +118,18 @@ const fetchAndExtractStep = createStep({
 
     const stndList = data.docs?.stnd || []
     for (const doc of stndList) {
-      const docNumber = doc.number || 'ГОСТ'
+      const docNumber = doc.number || '0'
       const docName = doc.name || ''
       const text = doc.text || ''
       if (!text.trim()) continue
 
-      const year = parseYear(docNumber)
+      const year = doc.year || 2000
+      const fileLink = doc.url || null
       rawDocs.push({
         docNumber,
         docName,
         docType: 'stnd',
-        fileLink: doc.file || null,
+        fileLink,
         fileType: 'stnd',
         year,
         products: doc.products || [],
@@ -153,19 +139,22 @@ const fetchAndExtractStep = createStep({
 
     const rstrList = data.docs?.rstr || []
     for (const doc of rstrList) {
-      const docNumber = doc.number || doc.name || '№ Госреестра'
+      const docNumber = doc.number || '00'
       const docName = doc.name || ''
       const textOt = doc.text_ot || ''
       const textMp = doc.text_mp || ''
-      const combinedText = [textOt ? `## Описание типа\n\n${textOt}` : '', textMp ? `## Методика поверки\n\n${textMp}` : '']
+      const combinedText = [
+        textOt ? `## Описание типа\n\n${textOt}` : '',
+        textMp ? `## Методика поверки\n\n${textMp}` : '',
+      ]
         .filter(Boolean)
         .join('\n\n---\n\n')
 
       if (!combinedText.trim()) continue
 
-      const year = parseYear(docNumber)
-      const fileLink = doc.file_ot || doc.file_mp || doc.file || null
-      const fileType = doc.file_ot ? 'file_ot' : doc.file_mp ? 'file_mp' : null
+      const year = doc.year || 2000
+      const fileLink = doc.url_ot || doc.url_mp || null
+      const fileType = doc.url_ot ? 'file_ot' : doc.url_mp ? 'file_mp' : null
 
       rawDocs.push({
         docNumber,
@@ -191,13 +180,11 @@ const fetchAndExtractStep = createStep({
       }
 
       const docReference = `${doc.docNumber} — ${doc.docName}`.trim()
-      console.log(`[CategoryCharacteristics] Extracting data for doc: "${docReference}" (${doc.year}), products: ${doc.products.length}`)
 
       const prompt = `
 Документ: ${docReference}
-Тип документа: ${doc.docType}
-Год: ${doc.year}
-Целевые продукты для фильтрации: ${JSON.stringify(doc.products, null, 2)}
+Целевые продукты для фильтрации:
+${JSON.stringify(doc.products, null, 2)}
 
 Текст документа:
 ${doc.documentText}
@@ -249,7 +236,8 @@ ${doc.documentText}
 
 const researchFallbackStep = createStep({
   id: 'researchFallback',
-  description: 'Performs fallback technical research using Tavily and available props when no documents have relevant data',
+  description:
+    'Performs fallback technical research using Tavily and available props when no documents have relevant data',
   inputSchema: storeSchema,
   outputSchema: storeSchema,
   execute: async ({ inputData, abortSignal }) => {
@@ -257,11 +245,13 @@ const researchFallbackStep = createStep({
       return inputData
     }
 
-    console.log(`[CategoryCharacteristics] No relevant documents found. Triggering fallback research for category: ${inputData.originalData.name}`)
+    console.log(
+      `[CategoryCharacteristics] No relevant documents found. Triggering fallback research for category: ${inputData.originalData.name}`,
+    )
 
     const researchPrompt = `
 Категория: ${inputData.originalData.name}
-Описание: ${inputData.originalData.description}
+Характеристики: ${inputData.originalData.characteristics}
 Стандарты: ${inputData.originalData.standards.join(', ')}
 ГРСИ: ${inputData.originalData.grsi.join(', ')}
 Доступные свойства (availableProps): ${JSON.stringify(inputData.originalData.availableProps, null, 2)}
@@ -290,10 +280,10 @@ const copywriterStep = createStep({
   description: 'Generates HTML characteristics block based on extractions or fallback research according to policy',
   inputSchema: storeSchema,
   outputSchema: storeSchema,
-  execute: async ({ inputData }) => {
+  execute: async ({ inputData, abortSignal }) => {
     let prompt = `
 Название категории: ${inputData.originalData.name}
-Описание категории: ${inputData.originalData.description}
+Характеристики категории: ${inputData.originalData.characteristics}
 Стандарты: ${inputData.originalData.standards.join(', ')}
 ГРСИ: ${inputData.originalData.grsi.join(', ')}
 ---
@@ -306,7 +296,7 @@ ${POLICY}
       prompt += `
 [РЕЖИМ FALLBACK-ИССЛЕДОВАНИЯ]
 Документы в базе отсутствуют или не содержат релевантных данных.
-Используйте следующую исследовательскую сводку для формирования HTML-блока характеристик (заголовок без ссылки):
+Используйте следующую исследовательскую сводку для формирования HTML-блока характеристик в соответствии с Политикой:
 ${inputData.fallbackResearch.technicalSummary}
 `
     } else {
@@ -314,10 +304,6 @@ ${inputData.fallbackResearch.technicalSummary}
 [РЕЖИМ ЭКСТРАКЦИИ ДОКУМЕНТОВ]
 Ниже представлены отфильтрованные выжимки из официальных документов (отсортированные от новых к старым):
 ${JSON.stringify(inputData.documentExtractions, null, 2)}
-
-Обязательно оформите каждый блок с правильной ссылкой согласно политике:
-- Стандарт: <strong>Параметры по <a class="doc-viewer-link" target="_blank" title="Открыть ГОСТ ..." href="[fileLink]">ГОСТ ...</a></strong> (если fileLink есть)
-- Госреестр: <strong>Параметры по Госреестру <a class="doc-viewer-link" target="_blank" title="Открыть описание типа" href="[fileLink]">№ ...</a></strong>
 `
     }
 
@@ -329,7 +315,9 @@ ${JSON.stringify(inputData.documentExtractions, null, 2)}
       prompt += `Предыдущий вариант текста:\n${lastFailed.generatedCharacteristics}\n`
     }
 
-    const generated = await categoryCharacteristicsCopywriterAgent.generate(prompt)
+    const generated = await categoryCharacteristicsCopywriterAgent.generate(prompt, {
+      abortSignal,
+    })
 
     return {
       ...inputData,
@@ -343,7 +331,7 @@ const judgeStep = createStep({
   description: 'Audits generated HTML characteristics against policy and HTML standards',
   inputSchema: storeSchema,
   outputSchema: storeSchema,
-  execute: async ({ inputData }) => {
+  execute: async ({ inputData, abortSignal }) => {
     const prompt = `
 Название категории: ${inputData.originalData.name}
 ---
@@ -357,6 +345,7 @@ ${inputData.generatedCharacteristics}
 `
 
     const result = await categoryCharacteristicsJudgeAgent.generate(prompt, {
+      abortSignal,
       structuredOutput: {
         schema: judgeEvaluationSchema,
         jsonPromptInjection: 'auto',

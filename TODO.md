@@ -13,7 +13,7 @@
 
 ## build category characteristics
 
-- build rag db from documents to get data?
+- if 'text' is empty (or less than something), don't bother extractor agent
 
 ## build product description
 
