@@ -3,9 +3,9 @@ import { z } from 'zod'
 
 export const tavilySearch = createTool({
   id: 'tavily-search',
-  description: 'Perform market research to find SEO keywords and competitor angles using the Tavily API',
+  description: 'Tool for performing web searches',
   inputSchema: z.object({
-    query: z.string().describe('The research query (e.g., "competitors for high-end coffee machines in Russia")'),
+    query: z.string().describe('The research query'),
   }),
   outputSchema: z.object({
     results: z.array(

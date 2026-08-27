@@ -17,7 +17,7 @@ const originalDataSchema = z.object({
   name: z.string(),
   characteristics: z.string().default(''),
   totalProducts: z.number().default(0),
-  availableProps: z.record(z.string(), z.array(z.string())).default({}),
+  availableProps: z.any().default({}),
   standards: z.array(z.string()).default([]),
   grsi: z.array(z.string()).default([]),
 })
@@ -72,8 +72,6 @@ const storeSchema = z.object({
     .default([]),
 })
 
-type StoreState = z.infer<typeof storeSchema>
-
 const fetchAndExtractStep = createStep({
   id: 'fetchAndExtract',
   description:
@@ -95,14 +93,17 @@ const fetchAndExtractStep = createStep({
       throw new Error(`Category data not found for alias: ${alias}`)
     }
 
+    const categorySummary = data.categorySummary || {}
+    const docs = data.docs || {}
+
     const originalData = {
       alias,
       name: catData.name || alias,
       characteristics: catData.characteristics || '',
-      totalProducts: catData.totalProducts || catData.products?.length || 0,
-      availableProps: catData.availableProps || {},
-      standards: catData.standards || [],
-      grsi: catData.grsi || [],
+      totalProducts: categorySummary.totalProducts || 0,
+      availableProps: categorySummary.availableProps || {},
+      standards: docs.stnd?.map((s: any) => s.number) || [],
+      grsi: docs.rstr?.map((s: any) => s.number) || [],
     }
 
     const rawDocs: Array<{
@@ -168,8 +169,12 @@ const fetchAndExtractStep = createStep({
       })
     }
 
-    // Sort documents deterministically by year descending (newest to oldest)
-    rawDocs.sort((a, b) => b.year - a.year)
+    // Sort documents: standards (stnd) first, then registries (rstr), and by year descending within each
+    rawDocs.sort((a, b) => {
+      if (a.docType === 'stnd' && b.docType !== 'stnd') return -1
+      if (a.docType !== 'stnd' && b.docType === 'stnd') return 1
+      return b.year - a.year
+    })
 
     const documentExtractions: z.infer<typeof documentExtractionItemSchema>[] = []
 
@@ -180,6 +185,13 @@ const fetchAndExtractStep = createStep({
       }
 
       const docReference = `${doc.docNumber} — ${doc.docName}`.trim()
+
+      if (doc.documentText.length < 200) {
+        console.log(
+          `[CategoryCharacteristics] Document "${docReference}" has documentText length < 200 (${doc.documentText.length}). Skipping.`,
+        )
+        continue
+      }
 
       const prompt = `
 Документ: ${docReference}
@@ -203,8 +215,9 @@ ${doc.documentText}
         }
 
         if (!extractedText) {
-          console.log(`[CategoryCharacteristics] Document "${docReference}" returned empty extraction. Skipping.`)
-          continue
+          throw new Error(
+            `[CategoryCharacteristics] Document "${docReference}" returned empty extraction (unexpected empty response from extractor agent).`,
+          )
         }
 
         documentExtractions.push({
@@ -249,15 +262,20 @@ const researchFallbackStep = createStep({
       `[CategoryCharacteristics] No relevant documents found. Triggering fallback research for category: ${inputData.originalData.name}`,
     )
 
-    const researchPrompt = `
-Категория: ${inputData.originalData.name}
-Характеристики: ${inputData.originalData.characteristics}
-Стандарты: ${inputData.originalData.standards.join(', ')}
-ГРСИ: ${inputData.originalData.grsi.join(', ')}
-Доступные свойства (availableProps): ${JSON.stringify(inputData.originalData.availableProps, null, 2)}
+    const standardsLine = inputData.originalData.standards.length > 0 ? `Стандарты: ${inputData.originalData.standards.join(', ')}` : ''
+    const grsiLine = inputData.originalData.grsi.length > 0 ? `ГРСИ: ${inputData.originalData.grsi.join(', ')}` : ''
 
-Выполните поиск и синтезируйте структурированную техническую сводку характеристик для данной категории измерительного инструмента.
-`
+    const researchPrompt = [
+      `Категория: ${inputData.originalData.name}`,
+      inputData.originalData.characteristics ? `Действующие характеристики: ${inputData.originalData.characteristics}` : '',
+      standardsLine,
+      grsiLine,
+      `Доступные модификации: ${JSON.stringify(inputData.originalData.availableProps, null, 2)}`,
+      '',
+      'Выполните поиск и синтезируйте структурированную техническую сводку характеристик для данной категории измерительного инструмента.',
+    ]
+      .filter(Boolean)
+      .join('\n')
 
     const researchResult = await categoryCharacteristicsResearcherAgent.generate(researchPrompt, {
       abortSignal,
@@ -281,28 +299,32 @@ const copywriterStep = createStep({
   inputSchema: storeSchema,
   outputSchema: storeSchema,
   execute: async ({ inputData, abortSignal }) => {
-    let prompt = `
-Название категории: ${inputData.originalData.name}
-Характеристики категории: ${inputData.originalData.characteristics}
-Стандарты: ${inputData.originalData.standards.join(', ')}
-ГРСИ: ${inputData.originalData.grsi.join(', ')}
----
-ПОЛИТИКА ВЕРСТКИ ХАРАКТЕРИСТИК:
-${POLICY}
----
-`
+    const standardsLine = inputData.originalData.standards.length > 0 ? `Стандарты: ${inputData.originalData.standards.join(', ')}` : ''
+    const grsiLine = inputData.originalData.grsi.length > 0 ? `ГРСИ: ${inputData.originalData.grsi.join(', ')}` : ''
+
+    let prompt = [
+      POLICY,
+      '---',
+      `Название категории: ${inputData.originalData.name}`,
+      inputData.originalData.characteristics ? `Действующие характеристики: ${inputData.originalData.characteristics}` : '',
+      standardsLine,
+      grsiLine,
+      '---',
+    ]
+      .filter(Boolean)
+      .join('\n')
 
     if (inputData.usedFallback && inputData.fallbackResearch) {
       prompt += `
 [РЕЖИМ FALLBACK-ИССЛЕДОВАНИЯ]
 Документы в базе отсутствуют или не содержат релевантных данных.
-Используйте следующую исследовательскую сводку для формирования HTML-блока характеристик в соответствии с Политикой:
+Используйте следующую исследовательскую сводку:
 ${inputData.fallbackResearch.technicalSummary}
 `
     } else {
       prompt += `
 [РЕЖИМ ЭКСТРАКЦИИ ДОКУМЕНТОВ]
-Ниже представлены отфильтрованные выжимки из официальных документов (отсортированные от новых к старым):
+Используйте следующие выжимки из официальных документов (отсортированные от новых к старым):
 ${JSON.stringify(inputData.documentExtractions, null, 2)}
 `
     }
@@ -332,17 +354,41 @@ const judgeStep = createStep({
   inputSchema: storeSchema,
   outputSchema: storeSchema,
   execute: async ({ inputData, abortSignal }) => {
-    const prompt = `
-Название категории: ${inputData.originalData.name}
----
-ПОЛИТИКА ВЕРСТКИ ХАРАКТЕРИСТИК:
-${POLICY}
----
-СГЕНЕРИРОВАННЫЕ ХАРАКТЕРИСТИКИ (HTML):
-${inputData.generatedCharacteristics}
----
-Проведите строгий аудит по критериям политики и верните JSON с вердиктом (PASS/FAIL), критикой и исправлениями.
-`
+    let sourceDataBlock = ''
+    if (inputData.originalData.characteristics) {
+      sourceDataBlock += `[ДЕЙСТВУЮЩИЕ ХАРАКТЕРИСТИКИ]\n${inputData.originalData.characteristics}\n\n`
+    }
+    if (inputData.usedFallback && inputData.fallbackResearch) {
+      sourceDataBlock += `[РЕЖИМ FALLBACK-ИССЛЕДОВАНИЯ]
+Исследовательская сводка:
+${inputData.fallbackResearch.technicalSummary}`
+    } else {
+      sourceDataBlock += `[ИСТОЧНИКИ (ДОКУМЕНТЫ И ВЫЖИМКИ)]
+${JSON.stringify(inputData.documentExtractions, null, 2)}`
+    }
+
+    const standardsLine = inputData.originalData.standards.length > 0 ? `Стандарты: ${inputData.originalData.standards.join(', ')}` : ''
+    const grsiLine = inputData.originalData.grsi.length > 0 ? `ГРСИ: ${inputData.originalData.grsi.join(', ')}` : ''
+
+    const prompt = [
+      POLICY,
+      '---',
+      `Название категории: ${inputData.originalData.name}`,
+      inputData.originalData.characteristics ? `Действующие характеристики: ${inputData.originalData.characteristics}` : '',
+      standardsLine,
+      grsiLine,
+      standardsLine || grsiLine ? '---' : '',
+      '---',
+      'ИСХОДНЫЕ ДАННЫЕ (ДЛЯ ПРОВЕРКИ ТЕХНИЧЕСКОЙ ТОЧНОСТИ И ССЫЛОК):',
+      sourceDataBlock,
+      '---',
+      'СГЕНЕРИРОВАННЫЕ ХАРАКТЕРИСТИКИ (HTML):',
+      inputData.generatedCharacteristics,
+      '---',
+      'Проведите строгий аудит по критериям политики (включая техническую точность по исходным данным и валидность ссылок) и верните JSON с вердиктом (PASS/FAIL), критикой и исправлениями.',
+    ]
+      .filter(Boolean)
+      .join('\n')
 
     const result = await categoryCharacteristicsJudgeAgent.generate(prompt, {
       abortSignal,
