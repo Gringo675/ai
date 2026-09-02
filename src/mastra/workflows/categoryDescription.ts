@@ -2,9 +2,9 @@ import { createStep, createWorkflow } from '@mastra/core/workflows'
 import { z } from 'zod'
 import fs from 'fs/promises'
 import { getCategoryData } from '../tools/getCategoryData'
-import { categoryResearcherAgent } from '../agents/categoryResearcherAgent'
-import { categoryCopywriterAgent } from '../agents/categoryCopywriterAgent'
-import { categoryQualityJudgeAgent } from '../agents/categoryQualityJudgeAgent'
+import { categoryDescriptionResearcherAgent } from '../agents/categoryDescriptionResearcherAgent'
+import { categoryDescriptionCopywriterAgent } from '../agents/categoryDescriptionCopywriterAgent'
+import { categoryDescriptionJudgeAgent } from '../agents/categoryDescriptionJudgeAgent'
 
 const POLICY = await fs.readFile('./prompts/categoryDescriptionPolicy.md', 'utf-8')
 // const POLICY = await fs.readFile('./src/mastra/public/prompts/categoryDescriptionPolicy.md', 'utf-8')
@@ -91,7 +91,7 @@ Original Category Description: ${inputData.description}
 ${inputData.standards?.length ? `Standards (GOST/etc): ${inputData.standards.join(', ')}` : ''}
 ${inputData.filters?.length ? `Available Filters/Options: ${JSON.stringify(inputData.filters)}` : ''}
 `
-    const research = await categoryResearcherAgent.generate(prompt, {
+    const research = await categoryDescriptionResearcherAgent.generate(prompt, {
       structuredOutput: {
         schema: researchSchema,
         jsonPromptInjection: 'auto',
@@ -144,7 +144,7 @@ ${POLICY}
       prompt += `\nПредыдущая версия текста для исправления:\n${lastFailedAttempt.generatedDescription}\n`
     }
 
-    const generatedDescription = await categoryCopywriterAgent.generate(prompt)
+    const generatedDescription = await categoryDescriptionCopywriterAgent.generate(prompt)
     return {
       ...inputData,
       generatedDescription: generatedDescription.text,
@@ -176,7 +176,7 @@ ${POLICY}
 Сгенерированное описание: ${inputData.generatedDescription}
 ---
 `
-    const result = await categoryQualityJudgeAgent.generate(prompt, {
+    const result = await categoryDescriptionJudgeAgent.generate(prompt, {
       structuredOutput: {
         schema: judgeEvaluationSchema,
         jsonPromptInjection: 'auto',

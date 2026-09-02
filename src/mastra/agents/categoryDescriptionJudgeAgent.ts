@@ -1,9 +1,9 @@
 import { createGoogleMultiKeyAgent } from './googleMultiKeyAgent'
 import { readFileSync } from 'fs'
 
-export const categoryQualityJudgeAgent = createGoogleMultiKeyAgent({
-  id: 'category-quality-judge-agent',
-  name: 'Category Quality Judge Agent',
+export const categoryDescriptionJudgeAgent = createGoogleMultiKeyAgent({
+  id: 'category-description-judge-agent',
+  name: 'Category Description Judge Agent',
   description: 'QA specialist for auditing category SEO descriptions',
   // model: 'google/gemini-3.1-flash-lite',
   // model: 'google/gemma-4-31b-it',
@@ -15,7 +15,6 @@ export const categoryQualityJudgeAgent = createGoogleMultiKeyAgent({
     // { model: 'google/gemini-3.1-flash-lite', maxRetries: 5 },
   ],
   instructions: () => {
-    return readFileSync('./prompts/categoryQualityJudge.md', 'utf-8')
-    // return readFileSync('./prompts/categoryQualityToughJudge.md', 'utf-8')
+    return readFileSync('./prompts/categoryDescriptionJudge.md', 'utf-8')
   },
 })

@@ -262,12 +262,15 @@ const researchFallbackStep = createStep({
       `[CategoryCharacteristics] No relevant documents found. Triggering fallback research for category: ${inputData.originalData.name}`,
     )
 
-    const standardsLine = inputData.originalData.standards.length > 0 ? `Стандарты: ${inputData.originalData.standards.join(', ')}` : ''
+    const standardsLine =
+      inputData.originalData.standards.length > 0 ? `Стандарты: ${inputData.originalData.standards.join(', ')}` : ''
     const grsiLine = inputData.originalData.grsi.length > 0 ? `ГРСИ: ${inputData.originalData.grsi.join(', ')}` : ''
 
     const researchPrompt = [
       `Категория: ${inputData.originalData.name}`,
-      inputData.originalData.characteristics ? `Действующие характеристики: ${inputData.originalData.characteristics}` : '',
+      inputData.originalData.characteristics
+        ? `Действующие характеристики: ${inputData.originalData.characteristics}`
+        : '',
       standardsLine,
       grsiLine,
       `Доступные модификации: ${JSON.stringify(inputData.originalData.availableProps, null, 2)}`,
@@ -299,14 +302,17 @@ const copywriterStep = createStep({
   inputSchema: storeSchema,
   outputSchema: storeSchema,
   execute: async ({ inputData, abortSignal }) => {
-    const standardsLine = inputData.originalData.standards.length > 0 ? `Стандарты: ${inputData.originalData.standards.join(', ')}` : ''
+    const standardsLine =
+      inputData.originalData.standards.length > 0 ? `Стандарты: ${inputData.originalData.standards.join(', ')}` : ''
     const grsiLine = inputData.originalData.grsi.length > 0 ? `ГРСИ: ${inputData.originalData.grsi.join(', ')}` : ''
 
     let prompt = [
       POLICY,
       '---',
       `Название категории: ${inputData.originalData.name}`,
-      inputData.originalData.characteristics ? `Действующие характеристики: ${inputData.originalData.characteristics}` : '',
+      inputData.originalData.characteristics
+        ? `Действующие характеристики: ${inputData.originalData.characteristics}`
+        : '',
       standardsLine,
       grsiLine,
       '---',
@@ -367,14 +373,14 @@ ${inputData.fallbackResearch.technicalSummary}`
 ${JSON.stringify(inputData.documentExtractions, null, 2)}`
     }
 
-    const standardsLine = inputData.originalData.standards.length > 0 ? `Стандарты: ${inputData.originalData.standards.join(', ')}` : ''
+    const standardsLine =
+      inputData.originalData.standards.length > 0 ? `Стандарты: ${inputData.originalData.standards.join(', ')}` : ''
     const grsiLine = inputData.originalData.grsi.length > 0 ? `ГРСИ: ${inputData.originalData.grsi.join(', ')}` : ''
 
     const prompt = [
       POLICY,
       '---',
       `Название категории: ${inputData.originalData.name}`,
-      inputData.originalData.characteristics ? `Действующие характеристики: ${inputData.originalData.characteristics}` : '',
       standardsLine,
       grsiLine,
       standardsLine || grsiLine ? '---' : '',

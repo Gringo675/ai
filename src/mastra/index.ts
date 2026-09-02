@@ -7,9 +7,9 @@ import { tavilySearch } from './tools/tavilySearch'
 import { saveHtmlToFile } from './tools/saveHtmlToFile'
 import { getCategoryData } from './tools/getCategoryData'
 
-import { categoryResearcherAgent } from './agents/categoryResearcherAgent'
-import { categoryCopywriterAgent } from './agents/categoryCopywriterAgent'
-import { categoryQualityJudgeAgent } from './agents/categoryQualityJudgeAgent'
+import { categoryDescriptionResearcherAgent } from './agents/categoryDescriptionResearcherAgent'
+import { categoryDescriptionCopywriterAgent } from './agents/categoryDescriptionCopywriterAgent'
+import { categoryDescriptionJudgeAgent } from './agents/categoryDescriptionJudgeAgent'
 import { categoryCharacteristicsResearcherAgent } from './agents/categoryCharacteristicsResearcherAgent'
 import { categoryCharacteristicsCopywriterAgent } from './agents/categoryCharacteristicsCopywriterAgent'
 import { categoryCharacteristicsJudgeAgent } from './agents/categoryCharacteristicsJudgeAgent'
@@ -20,8 +20,9 @@ import { testOpenRouterAgent } from './agents/testOpenRouterAgent'
 import { documentProductExtractorAgent } from './agents/documentProductExtractorAgent'
 
 import { categoryDescription } from './workflows/categoryDescription'
-import { categoryRevision } from './workflows/categoryRevision'
+import { categoryDescriptionRevision } from './workflows/categoryDescriptionRevision'
 import { categoryCharacteristics } from './workflows/categoryCharacteristics'
+import { categoryCharacteristicsRevision } from './workflows/categoryCharacteristicsRevision'
 import { fileParserWorkflow } from './workflows/fileParserWorkflow'
 import { fileParserWorkflowAuto } from './workflows/fileParserWorkflowAuto'
 import { testWorkflow } from './workflows/test-workflow'
@@ -38,9 +39,9 @@ export const mastra = new Mastra({
     url: 'file:./LibSQLStore/mastra.db', // in /public folder
   }),
   agents: {
-    categoryResearcherAgent,
-    categoryCopywriterAgent,
-    categoryQualityJudgeAgent,
+    categoryDescriptionResearcherAgent,
+    categoryDescriptionCopywriterAgent,
+    categoryDescriptionJudgeAgent,
     categoryCharacteristicsResearcherAgent,
     categoryCharacteristicsCopywriterAgent,
     categoryCharacteristicsJudgeAgent,
@@ -58,8 +59,9 @@ export const mastra = new Mastra({
   },
   workflows: {
     categoryDescription,
-    categoryRevision,
+    categoryDescriptionRevision,
     categoryCharacteristics,
+    categoryCharacteristicsRevision,
     fileParserWorkflow,
     fileParserWorkflowAuto,
     testWorkflow,

@@ -1,7 +1,7 @@
 import { createStep, createWorkflow } from '@mastra/core/workflows'
 import { z } from 'zod'
-import { categoryCopywriterAgent } from '../agents/categoryCopywriterAgent'
-import { categoryQualityJudgeAgent } from '../agents/categoryQualityJudgeAgent'
+import { categoryDescriptionCopywriterAgent } from '../agents/categoryDescriptionCopywriterAgent'
+import { categoryDescriptionJudgeAgent } from '../agents/categoryDescriptionJudgeAgent'
 import fs from 'fs/promises'
 
 const POLICY = await fs.readFile('./prompts/categoryDescriptionPolicy.md', 'utf-8')
@@ -88,7 +88,7 @@ ${inputData.revisionText}
 ---
 Ваша предыдущая попытка не прошла аудит качества. Пожалуйста, перепишите текст описания категории, учитывая все вышеперечисленные данные и строго следуя замечаниям редактора, при этом не нарушая общую политику описания.
 `
-    const result = await categoryCopywriterAgent.generate(prompt)
+    const result = await categoryDescriptionCopywriterAgent.generate(prompt)
     return {
       originalData: inputData.originalData,
       research: inputData.research,
@@ -125,7 +125,7 @@ ${POLICY}
 Сгенерированное описание: ${inputData.finalDescription}
 ---
 `
-    const result = await categoryQualityJudgeAgent.generate(prompt, {
+    const result = await categoryDescriptionJudgeAgent.generate(prompt, {
       structuredOutput: {
         schema: judgeEvaluationSchema,
         jsonPromptInjection: 'auto',
@@ -141,8 +141,8 @@ ${POLICY}
   },
 })
 
-export const categoryRevision = createWorkflow({
-  id: 'category-revision',
+export const categoryDescriptionRevision = createWorkflow({
+  id: 'category-description-revision',
   inputSchema: initialSchema,
   outputSchema: outputSchema,
   retryConfig: {
