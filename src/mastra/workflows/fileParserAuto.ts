@@ -2,7 +2,7 @@ import { createStep, createWorkflow } from '@mastra/core/workflows'
 import { z } from 'zod'
 import fs from 'fs/promises'
 import path from 'path'
-import { fileParserWorkflow, isRecitationError } from './fileParserWorkflow'
+import { fileParserWorkflow, isRecitationError } from './fileParser'
 
 const inputSchema = z.object({
   folderPath: z.string().default('/mnt/d/pr_gt/norm_docs/parsing'),
