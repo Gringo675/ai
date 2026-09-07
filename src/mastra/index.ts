@@ -26,6 +26,7 @@ import { categoryCharacteristics } from './workflows/categoryCharacteristics'
 import { categoryCharacteristicsRevision } from './workflows/categoryCharacteristicsRevision'
 import { fileParserWorkflow } from './workflows/fileParser'
 import { fileParserWorkflowAuto } from './workflows/fileParserAuto'
+import { fileParserRemote } from './workflows/fileParserRemote'
 import { testWorkflow } from './workflows/test-workflow'
 import { testWorkflow3 } from './workflows/test-workflow3'
 import { testDocumentProductExtractorWorkflow } from './workflows/testDocumentProductExtractorWorkflow'
@@ -66,6 +67,7 @@ export const mastra = new Mastra({
     categoryCharacteristicsRevision,
     fileParserWorkflow,
     fileParserWorkflowAuto,
+    fileParserRemote,
     testWorkflow,
     testWorkflow3,
     testDocumentProductExtractorWorkflow,
