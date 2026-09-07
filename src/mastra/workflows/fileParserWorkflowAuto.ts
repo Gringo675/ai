@@ -5,7 +5,7 @@ import path from 'path'
 import { fileParserWorkflow, isRecitationError } from './fileParserWorkflow'
 
 const inputSchema = z.object({
-  folderPath: z.string().default('D:\\pr_gt\\norm_docs\\parsing'),
+  folderPath: z.string().default('/mnt/d/pr_gt/norm_docs/parsing'),
 })
 
 const fileResultSchema = z.object({
@@ -44,7 +44,7 @@ const processFolderStep = createStep({
   inputSchema,
   outputSchema,
   execute: async ({ inputData, abortSignal }) => {
-    const baseFolder = inputData?.folderPath || 'D:\\pr_gt\\norm_docs\\parsing'
+    const baseFolder = inputData?.folderPath || '/mnt/d/pr_gt/norm_docs/parsing'
     const unparsedFolder = path.join(baseFolder, 'unparsed')
     const parsedFolder = path.join(baseFolder, 'parsed')
     const parsedPdfFolder = path.join(parsedFolder, 'pdf')

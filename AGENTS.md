@@ -3,8 +3,8 @@
 ## Rules
 
 - Register all agents, tools, workflows, and scorers in `src/mastra/index.ts`
-- Use the `dev` and `build` scripts from `package.json` instead of running `mastra dev` / `mastra build` directly
-- Do not run `npm run build` for testing after changes, as it breaks the already running dev server.
+- Do not run `npm run build` or `npm run dev`, as it breaks the already running dev server.
+- Create git commits only after explicit user approval.
 
 ## Resources
 

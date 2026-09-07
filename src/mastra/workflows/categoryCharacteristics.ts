@@ -1,7 +1,7 @@
 import { createStep, createWorkflow } from '@mastra/core/workflows'
 import { z } from 'zod'
 import fs from 'fs/promises'
-import { documentProductExtractorAgent } from '../agents/documentProductExtractorAgent'
+import { documentCategoryExtractorAgent } from '../agents/documentCategoryExtractorAgent'
 import { categoryCharacteristicsResearcherAgent } from '../agents/categoryCharacteristicsResearcherAgent'
 import { categoryCharacteristicsCopywriterAgent } from '../agents/categoryCharacteristicsCopywriterAgent'
 import { categoryCharacteristicsJudgeAgent } from '../agents/categoryCharacteristicsJudgeAgent'
@@ -195,7 +195,8 @@ const fetchAndExtractStep = createStep({
 
       const prompt = `
 Документ: ${docReference}
-Целевые продукты для фильтрации:
+Название категории: ${originalData.name}
+Товары категории:
 ${JSON.stringify(doc.products, null, 2)}
 
 Текст документа:
@@ -203,7 +204,7 @@ ${doc.documentText}
 `
 
       try {
-        const extractionResult = await documentProductExtractorAgent.generate(prompt, {
+        const extractionResult = await documentCategoryExtractorAgent.generate(prompt, {
           abortSignal,
         })
 

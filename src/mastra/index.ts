@@ -18,6 +18,7 @@ import { fileParserAgent } from './agents/fileParserAgent'
 import { testOllamaAgent } from './agents/testOllamaAgent'
 import { testOpenRouterAgent } from './agents/testOpenRouterAgent'
 import { documentProductExtractorAgent } from './agents/documentProductExtractorAgent'
+import { documentCategoryExtractorAgent } from './agents/documentCategoryExtractorAgent'
 
 import { categoryDescription } from './workflows/categoryDescription'
 import { categoryDescriptionRevision } from './workflows/categoryDescriptionRevision'
@@ -50,6 +51,7 @@ export const mastra = new Mastra({
     testOllamaAgent,
     testOpenRouterAgent,
     documentProductExtractorAgent,
+    documentCategoryExtractorAgent,
   },
   tools: {
     tavilyExtraction,
