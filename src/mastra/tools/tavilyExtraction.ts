@@ -3,9 +3,10 @@ import { z } from 'zod'
 
 export const tavilyExtraction = createTool({
   id: 'tavily-extraction',
-  description: 'Fetch clean, LLM-friendly content from a product URL using the Tavily API',
+  description:
+    'Extract full page content and technical tables from a specific URL (e.g., from search results, product datasheets, or standard pages) using the Tavily API',
   inputSchema: z.object({
-    url: z.string().url().describe('The product URL to extract content from'),
+    url: z.string().url().describe('The URL to extract content and specifications from'),
   }),
   outputSchema: z.object({
     content: z.string().describe('The extracted page content'),

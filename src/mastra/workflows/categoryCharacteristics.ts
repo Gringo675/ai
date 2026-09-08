@@ -282,6 +282,7 @@ const researchFallbackStep = createStep({
       .join('\n')
 
     const researchResult = await categoryCharacteristicsResearcherAgent.generate(researchPrompt, {
+      maxSteps: 7,
       abortSignal,
     })
 
