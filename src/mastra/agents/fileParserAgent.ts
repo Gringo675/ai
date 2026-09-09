@@ -1,6 +1,12 @@
 import { createGoogleMultiKeyAgent } from './googleMultiKeyAgent'
-import { Agent } from '@mastra/core/agent'
+import { ResponseCache } from '@mastra/core/processors'
+import { LibSQLServerCache } from '../cache/libsqlServerCache'
 import { readFileSync } from 'fs'
+
+const libsqlCache = new LibSQLServerCache({
+  url: 'file:./src/mastra/public/LibSQLStore/mastra.db',
+  tableName: 'mastra_response_cache',
+})
 
 export const fileParserAgent = createGoogleMultiKeyAgent({
   id: 'file-parser-agent',
@@ -24,6 +30,13 @@ export const fileParserAgent = createGoogleMultiKeyAgent({
     // return readFileSync('./prompts/fileParserLLMOnly.md', 'utf-8')
     return readFileSync('./prompts/fileParser.md', 'utf-8')
   },
+  // inputProcessors: [
+  //   new ResponseCache({
+  //     cache: libsqlCache,
+  //     agentId: 'file-parser-agent',
+  //     ttl: 60 * 60 * 24 * 7, // 7 days (seconds)
+  //   }),
+  // ],
 })
 
 // Recitation Error File Parser Agent

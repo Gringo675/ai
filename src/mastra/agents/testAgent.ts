@@ -1,13 +1,12 @@
 import { createGoogleMultiKeyAgent } from './googleMultiKeyAgent'
 import { Agent } from '@mastra/core/agent'
-// import { createOpenAICompatible } from '@ai-sdk/openai-compatible'
+import { ResponseCache } from '@mastra/core/processors'
+import { LibSQLServerCache } from '../cache/libsqlServerCache'
 
-// const omniRoute = createOpenAICompatible({
-//   name: 'omniRouter',
-//   baseURL: 'http://localhost:20128/v1',
-//   apiKey: process.env.OMNIROUTE_API_KEY,
-// })
-// Remove the local quotaErrorProcessor and rotation logic as it is now handled by the wrapper
+const libsqlCache = new LibSQLServerCache({
+  url: 'file:./src/mastra/public/LibSQLStore/mastra.db',
+  tableName: 'mastra_response_cache',
+})
 
 export const testAgent = createGoogleMultiKeyAgent({
   id: 'test-agent',
@@ -28,9 +27,9 @@ export const testAgent = createGoogleMultiKeyAgent({
   //   apiKey: process.env.GOOGLE_API_KEY,
   // },
   // model: 'google/gemini-3-flash-preview',
-  // model: 'google/gemma-4-31b-it',
+  model: 'google/gemma-4-31b-it',
   // model: 'google/gemini-3.5-flash-lite',
-  model: 'google/gemini-3.1-pro-preview',
+  // model: 'google/gemini-3.1-pro-preview',
   // model: [
   //   { model: 'google/gemini-3.1-pro-preview', maxRetries: 0 },
   //   { model: 'google/gemini-2.5-pro', maxRetries: 0 },
@@ -42,6 +41,14 @@ export const testAgent = createGoogleMultiKeyAgent({
   //   apiKey: process.env.OMNIROUTE_API_KEY,
   // },
   instructions: 'Just repeat everything I say',
+  inputProcessors: [
+    new ResponseCache({
+      cache: libsqlCache,
+      agentId: 'test-agent',
+      scope: null,
+      ttl: 60 * 60 * 24 * 7, // 7 days (seconds)
+    }),
+  ],
 })
 
 // export const testAgent = new Agent({

@@ -1,5 +1,12 @@
 import { createGoogleMultiKeyAgent } from './googleMultiKeyAgent'
+import { ResponseCache } from '@mastra/core/processors'
+import { LibSQLServerCache } from '../cache/libsqlServerCache'
 import { readFileSync } from 'fs'
+
+const libsqlCache = new LibSQLServerCache({
+  url: 'file:./src/mastra/public/LibSQLStore/mastra.db',
+  tableName: 'mastra_response_cache',
+})
 
 export const documentCategoryExtractorAgent = createGoogleMultiKeyAgent({
   id: 'document-category-extractor-agent',
@@ -13,4 +20,12 @@ export const documentCategoryExtractorAgent = createGoogleMultiKeyAgent({
   instructions: () => {
     return readFileSync('./prompts/documentCategoryExtractor.md', 'utf-8')
   },
+  inputProcessors: [
+    new ResponseCache({
+      cache: libsqlCache,
+      agentId: 'document-category-extractor-agent',
+      scope: null,
+      ttl: 60 * 60 * 24 * 7, // 7 days (seconds)
+    }),
+  ],
 })
