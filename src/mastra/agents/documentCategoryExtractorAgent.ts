@@ -20,12 +20,12 @@ export const documentCategoryExtractorAgent = createGoogleMultiKeyAgent({
   instructions: () => {
     return readFileSync('./prompts/documentCategoryExtractor.md', 'utf-8')
   },
-  inputProcessors: [
-    new ResponseCache({
-      cache: libsqlCache,
-      agentId: 'document-category-extractor-agent',
-      scope: null,
-      ttl: 60 * 60 * 24 * 7, // 7 days (seconds)
-    }),
-  ],
+  // inputProcessors: [
+  //   new ResponseCache({
+  //     cache: libsqlCache,
+  //     agentId: 'document-category-extractor-agent',
+  //     scope: null,
+  //     ttl: 60 * 60 * 24 * 7, // 7 days (seconds)
+  //   }),
+  // ],
 })
