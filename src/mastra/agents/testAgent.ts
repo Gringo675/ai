@@ -60,7 +60,7 @@ export const testAgent = createGoogleMultiKeyAgent({
 //     id: 'google/gemini-3-flash-preview',
 //     // id: 'google/gemma-4-31b-it',
 //     // id: 'google/gemini-3.1-pro-preview',
-//     apiKey: 'AIzaSyDDqP10xNSIJdh9zgawSKoOfkTEFffw_Lg',
+//     apiKey: '',
 //   },
 //   // model: 'google/gemma-4-31b-it',
 //   instructions: 'Just repeat everything I say',
