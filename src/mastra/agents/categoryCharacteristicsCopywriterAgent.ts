@@ -6,8 +6,8 @@ export const categoryCharacteristicsCopywriterAgent = createGoogleMultiKeyAgent(
   name: 'Category Characteristics Copywriter Agent',
   description: 'Technical copywriter for structuring and formatting category technical characteristics HTML blocks',
   model: [
+    { model: 'google/gemini-3.5-flash', maxRetries: 0 },
     { model: 'google/gemma-4-31b-it', maxRetries: 0 },
-    { model: 'google/gemini-3.7-flash', maxRetries: 0 },
     { model: 'google/gemini-3.6-flash', maxRetries: 0 },
   ],
   instructions: () => {

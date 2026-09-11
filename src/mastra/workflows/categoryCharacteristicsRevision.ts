@@ -24,6 +24,8 @@ const documentExtractionItemSchema = z.object({
   fileType: z.enum(['stnd', 'file_ot', 'file_mp']).nullable(),
   year: z.number(),
   productsCount: z.number(),
+  toolType: z.string().default(''),
+  brand: z.string().nullable().default(null),
   extractedMarkdown: z.string(),
 })
 

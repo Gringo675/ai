@@ -30,7 +30,24 @@ const documentExtractionItemSchema = z.object({
   fileType: z.enum(['stnd', 'file_ot', 'file_mp']).nullable(),
   year: z.number(),
   productsCount: z.number(),
+  toolType: z.string().nullable().default(null),
+  brand: z.string().nullable().default(null),
   extractedMarkdown: z.string(),
+})
+
+const extractorResultSchema = z.object({
+  toolType: z
+    .string()
+    .nullable()
+    .describe('Тип инструмента/прибора в именительном падеже (например: "Уровни брусковые", "Штангенциркули цифровые ШЦЦ")'),
+  brand: z
+    .string()
+    .nullable()
+    .describe('Канонический бренд / производитель инструмента (например: "ЧИЗ", "КировИнструмент"). Для стандартов (stnd) — null'),
+  extractedMarkdown: z
+    .string()
+    .nullable()
+    .describe('Выжимка таблиц и параметров без потерь или null, если нет релевантных данных'),
 })
 
 const fallbackResearchSchema = z.object({
@@ -203,37 +220,38 @@ ${JSON.stringify(doc.products, null, 2)}
 ${doc.documentText}
 `
 
-      try {
-        const extractionResult = await documentCategoryExtractorAgent.generate(prompt, {
-          abortSignal,
-        })
+      const extractionResult = await documentCategoryExtractorAgent.generate(prompt, {
+        abortSignal,
+        structuredOutput: {
+          schema: extractorResultSchema,
+          jsonPromptInjection: 'auto',
+        },
+      })
 
-        const extractedText = (extractionResult.text || '').trim()
+      const resultObj = extractionResult.object as z.infer<typeof extractorResultSchema> | undefined
+      const extractedText = (resultObj?.extractedMarkdown || '').trim()
 
-        if (extractedText === 'NO_RELEVANT_DATA' || extractedText.includes('NO_RELEVANT_DATA')) {
-          console.log(`[CategoryCharacteristics] Document "${docReference}" returned NO_RELEVANT_DATA. Skipping.`)
-          continue
-        }
-
-        if (!extractedText) {
-          throw new Error(
-            `[CategoryCharacteristics] Document "${docReference}" returned empty extraction (unexpected empty response from extractor agent).`,
-          )
-        }
-
-        documentExtractions.push({
-          docNumber: doc.docNumber,
-          docName: doc.docName,
-          docType: doc.docType,
-          fileLink: doc.fileLink,
-          fileType: doc.fileType,
-          year: doc.year,
-          productsCount: doc.products.length,
-          extractedMarkdown: extractedText,
-        })
-      } catch (err: any) {
-        console.error(`[CategoryCharacteristics] Error extracting document "${docReference}":`, err?.message || err)
+      if (
+        !extractedText ||
+        extractedText === 'NO_RELEVANT_DATA' ||
+        extractedText.includes('NO_RELEVANT_DATA')
+      ) {
+        console.log(`[CategoryCharacteristics] Document "${docReference}" returned no relevant data. Skipping.`)
+        continue
       }
+
+      documentExtractions.push({
+        docNumber: doc.docNumber,
+        docName: doc.docName,
+        docType: doc.docType,
+        fileLink: doc.fileLink,
+        fileType: doc.fileType,
+        year: doc.year,
+        productsCount: doc.products.length,
+        toolType: resultObj?.toolType || null,
+        brand: resultObj?.brand || null,
+        extractedMarkdown: extractedText,
+      })
     }
 
     return {
