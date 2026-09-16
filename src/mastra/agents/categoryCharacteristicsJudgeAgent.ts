@@ -6,7 +6,7 @@ export const categoryCharacteristicsJudgeAgent = createGoogleMultiKeyAgent({
   name: 'Category Characteristics Judge Agent',
   description: 'Audits generated category technical characteristics against policy and HTML standards',
   model: [
-    { model: 'google/gemini-3.7-flash', maxRetries: 0 },
+    { model: 'google/gemini-3.5-flash', maxRetries: 0 },
     { model: 'google/gemini-3.8-flash', maxRetries: 0 },
     { model: 'google/gemini-3.6-flash', maxRetries: 0 },
   ],

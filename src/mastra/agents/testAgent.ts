@@ -8,18 +8,31 @@ const libsqlCache = new LibSQLServerCache({
   tableName: 'mastra_response_cache',
 })
 
-export const testAgent = createGoogleMultiKeyAgent({
+// export const testAgent = createGoogleMultiKeyAgent({
+export const testAgent = new Agent({
   id: 'test-agent',
   name: 'Test Agent',
   description: 'A simple test agent',
-  // model: ({ requestContext }) => {
-  //   console.log(`requestContext: ${JSON.stringify(requestContext, null, 2)}`)
+  // model: async ({ requestContext }) => {
+  //   // console.log(`requestContext: ${JSON.stringify(requestContext, null, 2)}`)
 
-  //   const provider = requestContext.get('provider-id')
-  //   console.log(`provider: ${JSON.stringify(provider, null, 2)}`)
-  //   const model = requestContext.get('model-id')
-  //   console.log(`model: ${JSON.stringify(model, null, 2)}`)
-  //   return 'google/gemma-4-31b-it'
+  //   // const provider = requestContext.get('provider-id')
+  //   // console.log(`provider: ${JSON.stringify(provider, null, 2)}`)
+  //   // const model = requestContext.get('model-id')
+  //   // console.log(`model: ${JSON.stringify(model, null, 2)}`)
+
+  //   const aaa = await fetch('http://localhost:20128/v1/models', {
+  //     headers: {
+  //       Authorization: `Bearer ${process.env.OMNIROUTE_API_KEY}`,
+  //     },
+  //   })
+  //   console.log(`status:`, aaa.status)
+  //   console.log(`ok:`, aaa.ok)
+
+  //   const text = await aaa.text()
+  //   console.log(`body:`, text)
+
+  //   return 'omniroute/oc/big-pickle'
   // },
   // model: {
   //   // id: 'google/gemini-3-flash-preview',
@@ -27,28 +40,27 @@ export const testAgent = createGoogleMultiKeyAgent({
   //   apiKey: process.env.GOOGLE_API_KEY,
   // },
   // model: 'google/gemini-3-flash-preview',
-  model: 'google/gemma-4-31b-it',
+  // model: 'google/gemma-4-31b-it',
   // model: 'google/gemini-3.5-flash-lite',
   // model: 'google/gemini-3.1-pro-preview',
   // model: [
   //   { model: 'google/gemini-3.1-pro-preview', maxRetries: 0 },
   //   { model: 'google/gemini-2.5-pro', maxRetries: 0 },
   // ],
-  // model: {
-  //   // id: 'omniroute/oc/big-pickle',
-  //   id: 'omniroute/gemini/gemma-4-31b-it', // prefix may be anything
-  //   url: 'http://localhost:20128/v1',
-  //   apiKey: process.env.OMNIROUTE_API_KEY,
-  // },
+  model: {
+    id: 'omniroute/gweb/gemini-3.8-flash', // prefix may be anything
+    url: process.env.OMNIROUTE_BASE_URL,
+    apiKey: process.env.OMNIROUTE_API_KEY,
+  },
   instructions: 'Just repeat everything I say',
-  inputProcessors: [
-    new ResponseCache({
-      cache: libsqlCache,
-      agentId: 'test-agent',
-      scope: null,
-      ttl: 60 * 60 * 24 * 7, // 7 days (seconds)
-    }),
-  ],
+  // inputProcessors: [
+  //   new ResponseCache({
+  //     cache: libsqlCache,
+  //     agentId: 'test-agent',
+  //     scope: null,
+  //     ttl: 60 * 60 * 24 * 7, // 7 days (seconds)
+  //   }),
+  // ],
 })
 
 // export const testAgent = new Agent({

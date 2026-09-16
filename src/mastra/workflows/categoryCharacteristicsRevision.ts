@@ -72,6 +72,7 @@ const revisionStep = createStep({
     fallbackResearch: fallbackResearchSchema.nullable().optional(),
     usedFallback: z.boolean(),
     finalCharacteristics: z.string(),
+    revisionText: z.string(),
   }),
   execute: async ({ inputData, abortSignal }) => {
     const standardsLine =
@@ -128,6 +129,7 @@ ${inputData.revisionText}
       fallbackResearch: inputData.fallbackResearch,
       usedFallback: inputData.usedFallback,
       finalCharacteristics: result.text || '',
+      revisionText: inputData.revisionText,
     }
   },
 })
@@ -141,6 +143,7 @@ const judgeStep = createStep({
     fallbackResearch: fallbackResearchSchema.nullable().optional(),
     usedFallback: z.boolean(),
     finalCharacteristics: z.string(),
+    revisionText: z.string(),
   }),
   outputSchema: outputSchema,
   execute: async ({ inputData, abortSignal }) => {
@@ -172,10 +175,18 @@ ${JSON.stringify(inputData.documentExtractions, null, 2)}`
       'ИСХОДНЫЕ ДАННЫЕ (ДЛЯ ПРОВЕРКИ ТЕХНИЧЕСКОЙ ТОЧНОСТИ И ССЫЛОК):',
       sourceDataBlock,
       '---',
+      inputData.revisionText ? `ЗАМЕЧАНИЯ РЕДАКТОРА ДЛЯ ИСПРАВЛЕНИЯ:\n${inputData.revisionText}\n---` : '',
       'СГЕНЕРИРОВАННЫЕ ХАРАКТЕРИСТИКИ (HTML):',
       inputData.finalCharacteristics,
       '---',
-      'Проведите строгий аудит по критериям политики (включая техническую точность по исходным данным и валидность ссылок) и верните JSON с вердиктом (PASS/FAIL), критикой и исправлениями.',
+      inputData.revisionText
+        ? `ВНИМАНИЕ: Сейчас идет процесс исправления/ревизии характеристик по замечаниям редактора.
+Замечания редактора:
+"${inputData.revisionText}"
+
+Замечания редактора имеют наивысший приоритет над общей политикой! Если редактор просит сделать что-то, что расходится со стандартной политикой, это НЕ является нарушением — вы должны одобрить это изменение.
+Проведите строгий аудит по критериям политики (включая техническую точность по исходным данным и валидность ссылок), но с учетом наивысшего приоритета замечаний редактора (убедитесь, что они были полностью и корректно выполнены). Верните JSON с вердиктом (PASS/FAIL), критикой и исправлениями.`
+        : 'Проведите строгий аудит по критериям политики (включая техническую точность по исходным данным и валидность ссылок) и верните JSON с вердиктом (PASS/FAIL), критикой и исправлениями.',
     ]
       .filter(Boolean)
       .join('\n')
