@@ -10,6 +10,7 @@ const POLICY = await fs.readFile('./prompts/categoryCharacteristicsPolicy.md', '
 
 const initialStateSchema = z.object({
   alias: z.string(),
+  editorFeedback: z.string().optional(),
 })
 
 const originalDataSchema = z.object({
@@ -71,6 +72,7 @@ const judgeEvaluationSchema = z.object({
 
 const storeSchema = z.object({
   originalData: originalDataSchema,
+  editorFeedback: z.string().optional(),
   documentExtractions: z.array(documentExtractionItemSchema).default([]),
   fallbackResearch: fallbackResearchSchema.nullable().optional(),
   usedFallback: z.boolean().default(false),
@@ -210,15 +212,18 @@ const fetchAndExtractStep = createStep({
         continue
       }
 
-      const prompt = `
-Документ: ${docReference}
-Название категории: ${originalData.name}
-Товары категории:
-${JSON.stringify(doc.products, null, 2)}
-
-Текст документа:
-${doc.documentText}
-`
+      const prompt = [
+        inputData.editorFeedback
+          ? `[УКАЗАНИЯ И ПОДСКАЗКИ РЕДАКТОРА-ЭКСПЕРТА]\nУказания редактора являются истиной в последней инстанции и обязательны к исполнению при анализе документа и извлечении данных:\n"${inputData.editorFeedback}"\n`
+          : '',
+        `Документ: ${docReference}`,
+        `Название категории: ${originalData.name}`,
+        `Товары категории:\n${JSON.stringify(doc.products, null, 2)}`,
+        '',
+        `Текст документа:\n${doc.documentText}`,
+      ]
+        .filter(Boolean)
+        .join('\n')
 
       const extractionResult = await documentCategoryExtractorAgent.generate(prompt, {
         abortSignal,
@@ -256,6 +261,7 @@ ${doc.documentText}
 
     return {
       originalData,
+      editorFeedback: inputData.editorFeedback,
       documentExtractions,
       fallbackResearch: null,
       usedFallback: false,
@@ -355,6 +361,10 @@ ${JSON.stringify(inputData.documentExtractions, null, 2)}
 `
     }
 
+    if (inputData.editorFeedback) {
+      prompt += `\n[УКАЗАНИЯ И ПОДСКАЗКИ РЕДАКТОРА-ЭКСПЕРТА]\nУказания редактора являются истиной в последней инстанции и обязательны к исполнению при генерации HTML-характеристик:\n"${inputData.editorFeedback}"\n`
+    }
+
     if (inputData.judgeVerdict === 'FAIL' && inputData.failedAttempts.length) {
       const lastFailed = inputData.failedAttempts[inputData.failedAttempts.length - 1]
       prompt += `\n[ПРЕДЫДУЩАЯ ПОПЫТКА ОТКЛОНЕНА СУДЬЕЙ]\n`
@@ -408,10 +418,15 @@ ${JSON.stringify(inputData.documentExtractions, null, 2)}`
       'ИСХОДНЫЕ ДАННЫЕ (ДЛЯ ПРОВЕРКИ ТЕХНИЧЕСКОЙ ТОЧНОСТИ И ССЫЛОК):',
       sourceDataBlock,
       '---',
+      inputData.editorFeedback
+        ? `[УКАЗАНИЯ И ПОДСКАЗКИ РЕДАКТОРА-ЭКСПЕРТА]\nРедактор передал следующие обязательные указания:\n"${inputData.editorFeedback}"\n\nВНИМАНИЕ: Указания редактора являются истиной в последней инстанции и имеют наивысший приоритет над общей политикой! Если редактор просит сделать что-то, что расходится со стандартной политикой или с обычными эвристиками, это НЕ является ошибкой. Убедитесь, что указания редактора полностью и корректно выполнены.\n---`
+        : '',
       'СГЕНЕРИРОВАННЫЕ ХАРАКТЕРИСТИКИ (HTML):',
       inputData.generatedCharacteristics,
       '---',
-      'Проведите строгий аудит по критериям политики (включая техническую точность по исходным данным и валидность ссылок) и верните JSON с вердиктом (PASS/FAIL), критикой и исправлениями.',
+      inputData.editorFeedback
+        ? 'Проведите строгий аудит по критериям политики (включая техническую точность по исходным данным и валидность ссылок), но с учетом наивысшего приоритета указаний редактора. Верните JSON с вердиктом (PASS/FAIL), критикой и исправлениями.'
+        : 'Проведите строгий аудит по критериям политики (включая техническую точность по исходным данным и валидность ссылок) и верните JSON с вердиктом (PASS/FAIL), критикой и исправлениями.',
     ]
       .filter(Boolean)
       .join('\n')
