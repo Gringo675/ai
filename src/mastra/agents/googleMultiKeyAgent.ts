@@ -33,9 +33,17 @@ function getApiKeys(): string[] {
     // process.env.BACKUP_API_KEY_5,
     // process.env.BACKUP_API_KEY_6,
     // process.env.BACKUP_API_KEY_7,
-    process.env.BACKUP_API_KEY_8,
-    process.env.BACKUP_API_KEY_9,
-    process.env.BACKUP_API_KEY_10,
+    // process.env.BACKUP_API_KEY_8,
+    // process.env.BACKUP_API_KEY_9,
+    // process.env.BACKUP_API_KEY_10,
+    // process.env.PAID_API_KEY_1,
+    // process.env.PAID_API_KEY_2,
+    // process.env.PAID_API_KEY_3,
+    // process.env.PAID_API_KEY_4,
+    process.env.PAID_API_KEY_5,
+    process.env.PAID_API_KEY_6,
+    process.env.PAID_API_KEY_7,
+    process.env.PAID_API_KEY_8,
   ].filter((key): key is string => !!key)
 }
 
