@@ -40,11 +40,15 @@ const extractorResultSchema = z.object({
   toolType: z
     .string()
     .nullable()
-    .describe('Тип инструмента/прибора в именительном падеже (например: "Уровни брусковые", "Штангенциркули цифровые ШЦЦ")'),
+    .describe(
+      'Тип инструмента/прибора в именительном падеже (например: "Уровни брусковые", "Штангенциркули цифровые ШЦЦ")',
+    ),
   brand: z
     .string()
     .nullable()
-    .describe('Канонический бренд / производитель инструмента (например: "ЧИЗ", "КировИнструмент"). Для стандартов (stnd) — null'),
+    .describe(
+      'Канонический бренд / производитель инструмента (например: "ЧИЗ", "КировИнструмент"). Для стандартов (stnd) — null',
+    ),
   extractedMarkdown: z
     .string()
     .nullable()
@@ -99,7 +103,7 @@ const fetchAndExtractStep = createStep({
   outputSchema: storeSchema,
   execute: async ({ inputData, abortSignal }) => {
     const { alias } = inputData
-    const apiUrl = `http://localhost:3000/api/ai/categoryData/${alias}`
+    const apiUrl = `https://chelinstrument.ru/api/ai/categoryData/${alias}`
 
     const response = await fetch(apiUrl)
     if (!response.ok) {
@@ -236,11 +240,7 @@ const fetchAndExtractStep = createStep({
       const resultObj = extractionResult.object as z.infer<typeof extractorResultSchema> | undefined
       const extractedText = (resultObj?.extractedMarkdown || '').trim()
 
-      if (
-        !extractedText ||
-        extractedText === 'NO_RELEVANT_DATA' ||
-        extractedText.includes('NO_RELEVANT_DATA')
-      ) {
+      if (!extractedText || extractedText === 'NO_RELEVANT_DATA' || extractedText.includes('NO_RELEVANT_DATA')) {
         console.log(`[CategoryCharacteristics] Document "${docReference}" returned no relevant data. Skipping.`)
         continue
       }
@@ -389,6 +389,7 @@ const judgeStep = createStep({
   description: 'Audits generated HTML characteristics against policy and HTML standards',
   inputSchema: storeSchema,
   outputSchema: storeSchema,
+  retries: 3,
   execute: async ({ inputData, abortSignal }) => {
     let sourceDataBlock = ''
     if (inputData.originalData.characteristics) {
@@ -475,7 +476,7 @@ export const categoryCharacteristics = createWorkflow({
   inputSchema: initialStateSchema,
   outputSchema: storeSchema,
   retryConfig: {
-    attempts: 5,
+    attempts: 3,
     delay: 3000,
   },
   options: {

@@ -7,7 +7,9 @@
     "dev": "mastra dev",
     "build": "mastra build",
     "build with studio": "mastra build --studio",
-    "start": "mastra start"
+    "start": "mastra start",
+    "cache:clear:extractor": "node scripts/clear-cache.js document-category-extractor-agent",
+    "cache:clear:all": "node scripts/clear-cache.js --all"
   },
   "keywords": [],
   "author": "",

@@ -38,7 +38,7 @@ const testExtractStep = createStep({
   outputSchema,
   execute: async ({ inputData, abortSignal }) => {
     const { alias } = inputData
-    const apiUrl = `http://localhost:3000/api/ai/categoryData/${alias}`
+    const apiUrl = `https://chelinstrument.ru/api/ai/categoryData/${alias}`
 
     console.log(`[Workflow] Fetching category data from local API: ${apiUrl}`)
     const response = await fetch(apiUrl)

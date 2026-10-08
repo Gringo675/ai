@@ -10,7 +10,3 @@
 ## build product description
 
 ## build product characteristics
-
-## build category characteristics
-
-- подтверждение перехода работает некорректно (появляется на уже сохраненных данных и при отмене сбрасывает всю работу)

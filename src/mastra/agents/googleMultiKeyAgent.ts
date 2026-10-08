@@ -25,11 +25,11 @@ type ModelInput = AgentOptions['model']
 
 function getApiKeys(): string[] {
   return [
-    // process.env.GOOGLE_API_KEY,
-    // process.env.BACKUP_API_KEY_1,
-    // process.env.BACKUP_API_KEY_2,
-    // process.env.BACKUP_API_KEY_3,
-    // process.env.BACKUP_API_KEY_4,
+    process.env.GOOGLE_API_KEY,
+    process.env.BACKUP_API_KEY_1,
+    process.env.BACKUP_API_KEY_2,
+    process.env.BACKUP_API_KEY_3,
+    process.env.BACKUP_API_KEY_4,
     // process.env.BACKUP_API_KEY_5,
     // process.env.BACKUP_API_KEY_6,
     // process.env.BACKUP_API_KEY_7,
@@ -40,10 +40,10 @@ function getApiKeys(): string[] {
     // process.env.PAID_API_KEY_2,
     // process.env.PAID_API_KEY_3,
     // process.env.PAID_API_KEY_4,
-    process.env.PAID_API_KEY_5,
-    process.env.PAID_API_KEY_6,
-    process.env.PAID_API_KEY_7,
-    process.env.PAID_API_KEY_8,
+    // process.env.PAID_API_KEY_5,
+    // process.env.PAID_API_KEY_6,
+    // process.env.PAID_API_KEY_7,
+    // process.env.PAID_API_KEY_8,
   ].filter((key): key is string => !!key)
 }
 
