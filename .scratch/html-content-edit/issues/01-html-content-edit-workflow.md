@@ -8,16 +8,16 @@ Implement a universal Mastra workflow `html-content-edit` and an editor agent `h
 
 ## Acceptance Criteria
 
-- [ ] Create `src/mastra/agents/htmlEditorAgent.ts`:
+- [x] Create `src/mastra/agents/htmlEditorAgent.ts`:
   - Model: Fast & reliable instruction-following LLM.
   - System prompt: Specialized in editing HTML texts strictly following instructions, maintaining valid semantic HTML tags, and returning raw HTML without markdown code blocks.
-- [ ] Create `src/mastra/workflows/htmlContentEdit.ts`:
+- [x] Create `src/mastra/workflows/htmlContentEdit.ts`:
   - Input schema: `{ text: string, instruction: string }`.
   - Output schema: `{ modifiedText: string }`.
   - Step calls `htmlEditorAgent` and extracts the resulting HTML into `modifiedText`.
-- [ ] Register `htmlContentEdit` in `src/mastra/index.ts`.
-- [ ] Export workflow ID as `html-content-edit`.
-- [ ] Test the workflow with representative input data.
+- [x] Register `htmlContentEdit` in `src/mastra/index.ts`.
+- [x] Export workflow ID as `html-content-edit`.
+- [x] Test the workflow with representative input data.
 
 ## Context
 

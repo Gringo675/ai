@@ -19,6 +19,7 @@ import { testOllamaAgent } from './agents/testOllamaAgent'
 import { testOpenRouterAgent } from './agents/testOpenRouterAgent'
 import { documentProductExtractorAgent } from './agents/documentProductExtractorAgent'
 import { documentCategoryExtractorAgent } from './agents/documentCategoryExtractorAgent'
+import { htmlEditorAgent } from './agents/htmlEditorAgent'
 
 import { categoryDescription } from './workflows/categoryDescription'
 import { categoryDescriptionRevision } from './workflows/categoryDescriptionRevision'
@@ -31,6 +32,7 @@ import { testWorkflow } from './workflows/test-workflow'
 import { testWorkflow3 } from './workflows/test-workflow3'
 import { testDocumentProductExtractorWorkflow } from './workflows/testDocumentProductExtractorWorkflow'
 import { testCategoryCharacteristicsWorkflow } from './workflows/testCategoryCharacteristicsWorkflow'
+import { htmlContentEdit } from './workflows/htmlContentEdit'
 
 export const mastra = new Mastra({
   server: {
@@ -53,6 +55,7 @@ export const mastra = new Mastra({
     testOpenRouterAgent,
     documentProductExtractorAgent,
     documentCategoryExtractorAgent,
+    htmlEditorAgent,
   },
   tools: {
     tavilyExtraction,
@@ -72,6 +75,7 @@ export const mastra = new Mastra({
     testWorkflow3,
     testDocumentProductExtractorWorkflow,
     testCategoryCharacteristicsWorkflow,
+    htmlContentEdit,
   },
   observability: new Observability({
     configs: {
