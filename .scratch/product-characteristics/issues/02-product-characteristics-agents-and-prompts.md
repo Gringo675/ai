@@ -1,5 +1,5 @@
 ---
-Status: ready-for-agent
+Status: ready-for-human
 ---
 
 # Issue 02: Агенты, промпты и политика генерации характеристик товара

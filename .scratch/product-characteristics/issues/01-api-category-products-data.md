@@ -1,5 +1,5 @@
 ---
-Status: ready-for-agent
+Status: ready-for-human
 ---
 
 # Issue 01: API эндпойнт получения данных товаров категории (`categoryProductsData`)

@@ -20,6 +20,9 @@ import { testOpenRouterAgent } from './agents/testOpenRouterAgent'
 import { documentProductExtractorAgent } from './agents/documentProductExtractorAgent'
 import { documentCategoryExtractorAgent } from './agents/documentCategoryExtractorAgent'
 import { htmlEditorAgent } from './agents/htmlEditorAgent'
+import { productCharacteristicsCopywriterAgent } from './agents/productCharacteristicsCopywriterAgent'
+import { productCharacteristicsJudgeAgent } from './agents/productCharacteristicsJudgeAgent'
+import { productCharacteristicsResearcherAgent } from './agents/productCharacteristicsResearcherAgent'
 
 import { categoryDescription } from './workflows/categoryDescription'
 import { categoryDescriptionRevision } from './workflows/categoryDescriptionRevision'
@@ -33,6 +36,7 @@ import { testWorkflow3 } from './workflows/test-workflow3'
 import { testDocumentProductExtractorWorkflow } from './workflows/testDocumentProductExtractorWorkflow'
 import { testCategoryCharacteristicsWorkflow } from './workflows/testCategoryCharacteristicsWorkflow'
 import { htmlContentEdit } from './workflows/htmlContentEdit'
+import { productCharacteristics } from './workflows/productCharacteristics'
 
 export const mastra = new Mastra({
   server: {
@@ -56,6 +60,9 @@ export const mastra = new Mastra({
     documentProductExtractorAgent,
     documentCategoryExtractorAgent,
     htmlEditorAgent,
+    productCharacteristicsCopywriterAgent,
+    productCharacteristicsJudgeAgent,
+    productCharacteristicsResearcherAgent,
   },
   tools: {
     tavilyExtraction,
@@ -76,6 +83,7 @@ export const mastra = new Mastra({
     testDocumentProductExtractorWorkflow,
     testCategoryCharacteristicsWorkflow,
     htmlContentEdit,
+    productCharacteristics,
   },
   observability: new Observability({
     configs: {
