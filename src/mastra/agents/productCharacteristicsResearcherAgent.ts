@@ -1,9 +1,9 @@
-import { createGoogleMultiKeyAgent } from './googleMultiKeyAgent'
 import { ResponseCache } from '@mastra/core/processors'
 import { LibSQLServerCache } from '../cache/libsqlServerCache'
 import { tavilySearch } from '../tools/tavilySearch'
 import { tavilyExtraction } from '../tools/tavilyExtraction'
 import { existsSync, readFileSync } from 'fs'
+import { createGoogleAdaptiveAgent } from './googleAdaptiveAgent'
 
 const getPrompt = (file: string) => {
   const p1 = `./src/mastra/public/prompts/${file}`
@@ -16,13 +16,16 @@ const libsqlCache = new LibSQLServerCache({
   tableName: 'mastra_response_cache',
 })
 
-export const productCharacteristicsResearcherAgent = createGoogleMultiKeyAgent({
+export const productCharacteristicsResearcherAgent = createGoogleAdaptiveAgent({
   id: 'product-characteristics-researcher-agent',
   name: 'Product Characteristics Researcher Agent',
   description: 'Performs fallback research for single products without official documents',
   model: [
-    { model: 'google/gemini-3.5-flash', maxRetries: 0 },
-    { model: 'google/gemini-3.8-flash', maxRetries: 0 },
+    { model: 'google/gemini-3.5-flash-lite', maxRetries: 0 },
+    { model: 'google/gemma-4-31b-it', maxRetries: 0 },
+    // { model: 'google/gemini-3.6-flash', maxRetries: 0 },
+    // { model: 'google/gemini-3.7-flash', maxRetries: 0 },
+    // { model: 'google/gemini-3.8-flash', maxRetries: 0 },
     // { model: 'google/gemini-3.5-flash-lite', maxRetries: 0 },
     // { model: 'google/gemini-3.1-flash-lite', maxRetries: 0 },
     // { model: 'google/gemini-3.5-flash', maxRetries: 0 },

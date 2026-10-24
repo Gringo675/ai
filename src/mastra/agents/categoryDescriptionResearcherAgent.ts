@@ -1,8 +1,8 @@
-import { createGoogleMultiKeyAgent } from './googleMultiKeyAgent'
+import { createGoogleAdaptiveAgent } from './googleAdaptiveAgent'
 import { tavilySearch } from '../tools/tavilySearch'
 import { readFileSync } from 'fs'
 
-export const categoryDescriptionResearcherAgent = createGoogleMultiKeyAgent({
+export const categoryDescriptionResearcherAgent = createGoogleAdaptiveAgent({
   id: 'category-description-researcher-agent',
   name: 'Category Description Researcher Agent',
   description: 'SEO researcher for measuring tools categories, providing a brief for the copywriter',

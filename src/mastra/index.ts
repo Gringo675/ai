@@ -6,6 +6,7 @@ import { tavilyExtraction } from './tools/tavilyExtraction'
 import { tavilySearch } from './tools/tavilySearch'
 import { saveHtmlToFile } from './tools/saveHtmlToFile'
 import { getCategoryData } from './tools/getCategoryData'
+import { googleKeysHealthTool } from './tools/googleKeysHealthTool'
 
 import { categoryDescriptionResearcherAgent } from './agents/categoryDescriptionResearcherAgent'
 import { categoryDescriptionCopywriterAgent } from './agents/categoryDescriptionCopywriterAgent'
@@ -69,6 +70,7 @@ export const mastra = new Mastra({
     tavilySearch,
     saveHtmlToFile,
     getCategoryData,
+    googleKeysHealthTool,
   },
   workflows: {
     categoryDescription,

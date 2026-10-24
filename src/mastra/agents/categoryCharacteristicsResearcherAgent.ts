@@ -1,4 +1,4 @@
-import { createGoogleMultiKeyAgent } from './googleMultiKeyAgent'
+import { createGoogleAdaptiveAgent } from './googleAdaptiveAgent'
 import { ResponseCache } from '@mastra/core/processors'
 import { LibSQLServerCache } from '../cache/libsqlServerCache'
 import { tavilySearch } from '../tools/tavilySearch'
@@ -10,7 +10,7 @@ const libsqlCache = new LibSQLServerCache({
   tableName: 'mastra_response_cache',
 })
 
-export const categoryCharacteristicsResearcherAgent = createGoogleMultiKeyAgent({
+export const categoryCharacteristicsResearcherAgent = createGoogleAdaptiveAgent({
   id: 'category-characteristics-researcher-agent',
   name: 'Category Characteristics Researcher Agent',
   description: 'Performs fallback research and parameter synthesis for categories without official documents',

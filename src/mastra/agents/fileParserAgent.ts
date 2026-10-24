@@ -1,4 +1,4 @@
-import { createGoogleMultiKeyAgent } from './googleMultiKeyAgent'
+import { createGoogleAdaptiveAgent } from './googleAdaptiveAgent'
 import { ResponseCache } from '@mastra/core/processors'
 import { LibSQLServerCache } from '../cache/libsqlServerCache'
 import { readFileSync } from 'fs'
@@ -8,7 +8,7 @@ const libsqlCache = new LibSQLServerCache({
   tableName: 'mastra_response_cache',
 })
 
-export const fileParserAgent = createGoogleMultiKeyAgent({
+export const fileParserAgent = createGoogleAdaptiveAgent({
   id: 'file-parser-agent',
   name: 'File Parser Agent',
   description: 'Оцифровывает, распарсивает и структурирует PDF-документы в форматы HTML и Markdown',

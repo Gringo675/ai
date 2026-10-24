@@ -1,4 +1,4 @@
-import { createGoogleMultiKeyAgent } from './googleMultiKeyAgent'
+import { createGoogleAdaptiveAgent } from './googleAdaptiveAgent'
 import { existsSync, readFileSync } from 'fs'
 
 const getPrompt = (file: string) => {
@@ -7,7 +7,7 @@ const getPrompt = (file: string) => {
   return readFileSync(existsSync(p1) ? p1 : p2, 'utf-8')
 }
 
-export const productCharacteristicsJudgeAgent = createGoogleMultiKeyAgent({
+export const productCharacteristicsJudgeAgent = createGoogleAdaptiveAgent({
   id: 'product-characteristics-judge-agent',
   name: 'Product Characteristics Judge Agent',
   description: 'Audits generated single product technical characteristics against policy and source documents',

@@ -25,7 +25,7 @@ type ModelInput = AgentOptions['model']
 
 function getApiKeys(): string[] {
   return [
-    // process.env.GOOGLE_API_KEY,
+    process.env.GOOGLE_API_KEY,
     // process.env.BACKUP_API_KEY_1,
     // process.env.BACKUP_API_KEY_2,
     // process.env.BACKUP_API_KEY_3,
@@ -36,10 +36,10 @@ function getApiKeys(): string[] {
     // process.env.BACKUP_API_KEY_8,
     // process.env.BACKUP_API_KEY_9,
     // process.env.BACKUP_API_KEY_10,
-    process.env.PAID_API_KEY_1,
-    process.env.PAID_API_KEY_2,
-    process.env.PAID_API_KEY_3,
-    process.env.PAID_API_KEY_4,
+    // process.env.PAID_API_KEY_1,
+    // process.env.PAID_API_KEY_2,
+    // process.env.PAID_API_KEY_3,
+    // process.env.PAID_API_KEY_4,
     // process.env.PAID_API_KEY_5,
     // process.env.PAID_API_KEY_6,
     // process.env.PAID_API_KEY_7,
@@ -84,6 +84,7 @@ function extractModelIdAndConfig(item: any): {
 }
 
 export function buildGoogleMultiKeyModels(modelOption: ModelInput): ModelInput {
+  // console.log(`||||||||||||| From buildGoogleMultiKeyModel ||||||||||||||||||`)
   const apiKeys = getApiKeys()
   if (!apiKeys.length || !modelOption) {
     return modelOption
@@ -112,7 +113,7 @@ export function buildGoogleMultiKeyModels(modelOption: ModelInput): ModelInput {
       })
     }
   }
-
+  // console.log(`expandedList: ${JSON.stringify(expandedList, null, 2)}`)
   return expandedList
 }
 

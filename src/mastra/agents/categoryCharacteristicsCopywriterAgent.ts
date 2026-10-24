@@ -1,7 +1,7 @@
-import { createGoogleMultiKeyAgent } from './googleMultiKeyAgent'
+import { createGoogleAdaptiveAgent } from './googleAdaptiveAgent'
 import { readFileSync } from 'fs'
 
-export const categoryCharacteristicsCopywriterAgent = createGoogleMultiKeyAgent({
+export const categoryCharacteristicsCopywriterAgent = createGoogleAdaptiveAgent({
   id: 'category-characteristics-copywriter-agent',
   name: 'Category Characteristics Copywriter Agent',
   description: 'Technical copywriter for structuring and formatting category technical characteristics HTML blocks',

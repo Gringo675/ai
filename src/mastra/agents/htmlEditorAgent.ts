@@ -1,7 +1,7 @@
-import { createGoogleMultiKeyAgent } from './googleMultiKeyAgent'
+import { createGoogleAdaptiveAgent } from './googleAdaptiveAgent'
 import { readFileSync } from 'fs'
 
-export const htmlEditorAgent = createGoogleMultiKeyAgent({
+export const htmlEditorAgent = createGoogleAdaptiveAgent({
   id: 'html-editor-agent',
   name: 'HTML Editor Agent',
   description:

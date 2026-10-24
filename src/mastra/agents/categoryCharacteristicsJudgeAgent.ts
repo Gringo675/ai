@@ -1,7 +1,7 @@
-import { createGoogleMultiKeyAgent } from './googleMultiKeyAgent'
+import { createGoogleAdaptiveAgent } from './googleAdaptiveAgent'
 import { readFileSync } from 'fs'
 
-export const categoryCharacteristicsJudgeAgent = createGoogleMultiKeyAgent({
+export const categoryCharacteristicsJudgeAgent = createGoogleAdaptiveAgent({
   id: 'category-characteristics-judge-agent',
   name: 'Category Characteristics Judge Agent',
   description: 'Audits generated category technical characteristics against policy and HTML standards',

@@ -1,7 +1,7 @@
-import { createGoogleMultiKeyAgent } from './googleMultiKeyAgent'
+import { createGoogleAdaptiveAgent } from './googleAdaptiveAgent'
 import { readFileSync } from 'fs'
 
-export const documentProductExtractorAgent = createGoogleMultiKeyAgent({
+export const documentProductExtractorAgent = createGoogleAdaptiveAgent({
   id: 'document-product-extractor-agent',
   name: 'Document Product Extractor Agent',
   description:

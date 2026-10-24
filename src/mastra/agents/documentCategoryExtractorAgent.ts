@@ -1,4 +1,4 @@
-import { createGoogleMultiKeyAgent } from './googleMultiKeyAgent'
+import { createGoogleAdaptiveAgent } from './googleAdaptiveAgent'
 import { Agent } from '@mastra/core/agent'
 
 import { ResponseCache } from '@mastra/core/processors'
@@ -10,7 +10,7 @@ const libsqlCache = new LibSQLServerCache({
   tableName: 'mastra_response_cache',
 })
 
-export const documentCategoryExtractorAgent = createGoogleMultiKeyAgent({
+export const documentCategoryExtractorAgent = createGoogleAdaptiveAgent({
   // export const documentCategoryExtractorAgent = new Agent({
   id: 'document-category-extractor-agent',
   name: 'Document Category Extractor Agent',

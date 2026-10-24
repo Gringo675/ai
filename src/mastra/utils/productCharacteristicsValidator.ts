@@ -189,5 +189,43 @@ export function validateProductCharacteristicsHtml(
     }
   }
 
+  // 6. Проверка строгого соответствия количества нормативных блоков переданным документам
+  const docHeaderMatches = html.match(/Параметры по (?:ГОСТ|ТУ|Госреестру)/gi) || []
+  const expectedDocsCount = documents ? documents.length : 0
+
+  if (expectedDocsCount === 0 && docHeaderMatches.length > 0) {
+    return {
+      verdict: 'FAIL',
+      reason: 'Товар не имеет официальных документов (режим Fallback). Заголовки "Параметры по ГОСТ / Госреестру" запрещены, используйте "Основные технические характеристики"',
+    }
+  }
+
+  if (docHeaderMatches.length > expectedDocsCount) {
+    return {
+      verdict: 'FAIL',
+      reason: `Количество нормативных блоков в разметке (${docHeaderMatches.length}) превышает количество переданных официальных документов (${expectedDocsCount}). Запрещено добавлять неподтвержденные стандарты и реестры`,
+    }
+  }
+
+  // 7. Проверка отсутствия посторонних ссылок doc-viewer-link
+  const allLinks = DomUtils.getElementsByTagName('a', dom) as Element[]
+  const docLinks = allLinks.filter(a => (a.attribs?.class || '').includes('doc-viewer-link'))
+  const validFileLinks = (documents || [])
+    .map(d => d.fileLink)
+    .filter((l): l is string => Boolean(l))
+
+  for (const docLink of docLinks) {
+    const href = docLink.attribs?.href || ''
+    const isValid = validFileLinks.some(
+      vl => href === vl || decodeURI(href) === decodeURI(vl) || encodeURI(href) === vl,
+    )
+    if (!isValid) {
+      return {
+        verdict: 'FAIL',
+        reason: `Обнаружена ссылка на неподтвержденный документ (${href}). Разрешены только ссылки на официально переданные документы товара`,
+      }
+    }
+  }
+
   return { verdict: 'PASS' }
 }
