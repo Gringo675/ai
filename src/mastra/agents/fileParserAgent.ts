@@ -15,8 +15,8 @@ export const fileParserAgent = createGoogleAdaptiveAgent({
   // model: 'google/gemini-3.6-flash',
   // model: 'google/gemma-4-31b-it',
   model: [
+    { model: 'google/gemini-3.8-flash', maxRetries: 0 },
     { model: 'google/gemini-3.6-flash', maxRetries: 0 },
-    { model: 'google/gemini-3.5-flash', maxRetries: 0 },
     // { model: 'google/gemini-3-flash-preview', maxRetries: 2 },
     // { model: 'google/gemini-2.5-flash', maxRetries: 2 },
     // { model: 'google/gemini-3.1-flash-lite', maxRetries: 5 },

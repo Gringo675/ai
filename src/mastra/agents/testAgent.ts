@@ -42,7 +42,9 @@ export const testAgent = new Agent({
   // model: 'google/gemini-3-flash-preview',
   // model: 'google/gemma-4-31b-it',
   model: {
-    id: 'google/gemini-3.8-flash',
+    id: 'google/gemini-3.6-flash',
+    // id: 'google/gemini-3.8-flash',
+    // id: 'google/gemini-4-hydrogen',
     apiKey: process.env.PAID_API_KEY_1,
   },
   maxRetries: 0,
